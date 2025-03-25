@@ -16,6 +16,11 @@ public class Physiotherapist extends Member {
         return expertise;
     }
 
+    //Generate Unique ID
+    private static String generateID() {
+        return "PHY" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    }
+
     /* Add appointment to schedule
     public boolean addAppointment(int week, Appointment appointment) {
         schedule.putIfAbsent(week, new ArrayList<>());

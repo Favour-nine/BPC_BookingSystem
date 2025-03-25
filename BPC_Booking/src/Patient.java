@@ -9,6 +9,11 @@ public class Patient extends Member {
         this.appointmentList = new ArrayList<>();
     }
 
+    // Generate unique ID
+    private static String generateID() {
+        return "PAT" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    }
+
     // Book an appointment
     public boolean bookAppointment(Appointment appointment){
         // Check for conflicts (To be implemented later)
