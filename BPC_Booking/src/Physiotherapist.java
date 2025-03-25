@@ -17,7 +17,7 @@ public class Physiotherapist extends Member {
     }
 
     //Generate Unique ID
-    private static String generateID() {
+    private static String generateUniqueId() {
         return "PHY" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 

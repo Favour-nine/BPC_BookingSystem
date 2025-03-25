@@ -10,7 +10,7 @@ public class Patient extends Member {
     }
 
     // Generate unique ID
-    private static String generateID() {
+    private static String generateUniqueId() {
         return "PAT" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
