@@ -4,8 +4,8 @@ public class Patient extends Member {
     private List<Appointment> appointmentList;
 
     // Constructor
-    public Patient(String fullName, String phoneNumber, String address, String uniqueId){
-        super(fullName, phoneNumber, address, uniqueId);
+    public Patient(String fullName, String phoneNumber, String address){
+        super(fullName, phoneNumber, address, generateUniqueId());
         this.appointmentList = new ArrayList<>();
     }
 
@@ -13,6 +13,8 @@ public class Patient extends Member {
     private static String generateUniqueId() {
         return "PAT" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
+
+
 
     // Book an appointment
     public boolean bookAppointment(Appointment appointment){

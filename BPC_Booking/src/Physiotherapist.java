@@ -5,8 +5,8 @@ public class Physiotherapist extends Member {
     private Map<Integer, List<Appointment>> schedule;// Weekly schedule (Week number → Appointments)
 
     // Constructor
-    public Physiotherapist(String fullName, String phoneNumber, String address, String uniqueId, List<String> expertise){
-        super(fullName, phoneNumber, address, uniqueId);
+    public Physiotherapist(String fullName, String phoneNumber, String address, List<String> expertise){
+        super(fullName, phoneNumber, address, generateUniqueId());
         this.expertise = expertise;
         this.schedule = new HashMap<>();
     }
@@ -16,7 +16,7 @@ public class Physiotherapist extends Member {
         return expertise;
     }
 
-    //Generate Unique ID
+    //Generate Unique ID for physiotherapist
     private static String generateUniqueId() {
         return "PHY" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }

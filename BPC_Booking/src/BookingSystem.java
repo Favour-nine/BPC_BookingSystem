@@ -1,3 +1,5 @@
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 public class BookingSystem {
     // Attributes
@@ -12,6 +14,14 @@ public class BookingSystem {
         this.appointments = new ArrayList<>();
     }
 
+    // Register new patient
+    public Patient registerPatient(String fullName, String phoneNumber, String address) {
+        Patient newPatient = new Patient(fullName, phoneNumber, address);
+        patients.add(newPatient);
+        System.out.println("Patient registered successfully. ID: " + newPatient.getUniqueId());
+        return newPatient;
+    }
+
     // Add a new patient
     public void addPatient(Patient patient) {
         patients.add(patient);
@@ -20,6 +30,10 @@ public class BookingSystem {
     // Remove a patient
     public boolean removePatient(String patientID) {
         return patients.removeIf(patient -> patient.getUniqueId().equals(patientID));
+    }
+
+    public List<Patient> getPatients() {
+        return new ArrayList<>(patients); // Returns a copy to prevent modification outside the class
     }
 
     // Add a physiotherapist
@@ -48,16 +62,36 @@ public class BookingSystem {
         return null;
     }
 
-    // Book an appointment
-    public boolean bookAppointment(Patient patient, Physiotherapist physio, int week, String date, String time, Treatment treatment) {
-        Appointment newAppointment = new Appointment(UUID.randomUUID().toString(), new Date(), time, treatment, physio, patient);
-        if (!physio.getAvailableAppointments(week).contains(newAppointment)) {
+    // Book an appointment only if no time conflict exists for the physiotherapist at the specified week/date/time
+    public boolean bookAppointment(Patient patient, Physiotherapist physio, int week, String dateStr, String time, Treatment treatment) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date;
+        try {
+            // Convert the input string to a proper Date object
+            date = sdf.parse(dateStr);
+        }
+        catch (ParseException e) {
+            System.out.println("Invalid date format. Use yyyy-MM-dd.");
+            return false;
+        }
+
+        // Create the new appointment to be booked
+        Appointment newAppointment = new Appointment(UUID.randomUUID().toString(), date, time, treatment, physio, patient);
+        List<Appointment> existingAppointments = physio.getAvailableAppointments(week);
+
+        // Ensure there is no existing appointment with the same time and date
+        boolean timeConflict = existingAppointments.stream()
+                .anyMatch(app -> app.getTime().equals(time) && app.getDate().equals(date));
+
+        if (!timeConflict) {
+            // If no conflict, add to physiotherapist, patient, and system-wide appointment list
             physio.addAppointment(week, newAppointment);
             patient.bookAppointment(newAppointment);
             appointments.add(newAppointment);
-            return true;  // Booking successful
+            return true;
         }
-        return false;  // Slot already taken
+        return false;
+
     }
 
     // Cancel an appointment
@@ -68,6 +102,7 @@ public class BookingSystem {
                 return true;
             }
         }
+        return false;
     }
 
     // Generate a report of all appointments
@@ -82,6 +117,31 @@ public class BookingSystem {
                             ", Status: " + appointment.getStatus()
             );
         }
+    }
+
+    // Generate 4-week timetable with treatments for all physiotherapists
+    public void generateTreatmentTimetable(List<Treatment> treatments) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2025, Calendar.MAY, 5); // week 1 starts May 5, 2025
+
+        for (Physiotherapist physio : physiotherapists) {
+            physio.generateWeeklySchedule();
+            for (int week = 1; week <= 4; week++) {// weeks in a month
+                for (int day = 0; day < 5; day++) {// monday to friday
+                    for (int hour = 9; hour < 16; hour++){ // 7 sessions per day from 9 am to 3 pm
+                        String time = hour + ":00";
+                        Treatment treatment = treatments.get(new Random().nextInt(treatments.size()));
+                        Date date = calendar.getTime();
+                        Appointment slot = new Appointment(UUID.randomUUID().toString(), date, time, treatment, physio, null);
+                        physio.addAppointment(week, slot);
+                    }
+                    calendar.add(Calendar.DATE, 1);
+                }
+                calendar.add(Calendar.DATE, 2); // skip saturday and sunday
+            }
+        }
+        System.out.println("Weekday schedule (7 sessions/day, Mon–Fri) generated for all physiotherapists.");
     }
 
 
