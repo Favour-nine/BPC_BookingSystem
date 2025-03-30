@@ -36,15 +36,15 @@ public class Main {
     // ✅ Preload some sample physiotherapists, patients, and treatments
     private static void initializeSampleData() {
         // Sample Physiotherapists
-        Physiotherapist physio1 = new Physiotherapist("Dr. James Smith", "123-456-7890", "123 Main St", "PHY001", Arrays.asList("Rehabilitation", "Osteopathy"));
-        Physiotherapist physio2 = new Physiotherapist("Dr. Sarah Johnson", "987-654-3210", "456 Elm St", "PHY002", Arrays.asList("Physiotherapy", "Massage"));
+        Physiotherapist physio1 = new Physiotherapist("Dr. James Smith", "123-456-7890", "123 Main St", Arrays.asList("Rehabilitation", "Osteopathy"));
+        Physiotherapist physio2 = new Physiotherapist("Dr. Sarah Johnson", "987-654-3210", "456 Elm St", Arrays.asList("Physiotherapy", "Massage"));
 
         bookingSystem.addPhysiotherapist(physio1);
         bookingSystem.addPhysiotherapist(physio2);
 
         // Sample Patients
-        Patient patient1 = new Patient("Alice Brown", "111-222-3333", "789 Maple St", "PAT001");
-        Patient patient2 = new Patient("Bob White", "444-555-6666", "321 Oak St", "PAT002");
+        Patient patient1 = new Patient("Alice Brown", "111-222-3333", "789 Maple St");
+        Patient patient2 = new Patient("Bob White", "444-555-6666", "321 Oak St");
 
         bookingSystem.addPatient(patient1);
         bookingSystem.addPatient(patient2);
