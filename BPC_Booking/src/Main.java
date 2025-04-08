@@ -12,8 +12,9 @@ public class Main {
             System.out.println("1. Book an appointment");
             System.out.println("2. Cancel an appointment");
             System.out.println("3. View available physiotherapists by expertise");
-            System.out.println("4. Generate report");
-            System.out.println("5. Exit");
+            System.out.println("4. View physiotherapist's appointments");
+            System.out.println("5. Generate report");
+            System.out.println("6. Exit");
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
@@ -23,8 +24,9 @@ public class Main {
                 case 1 -> bookAppointment();
                 case 2 -> cancelAppointment();
                 case 3 -> searchPhysiotherapists();
-                case 4 -> bookingSystem.generateReport();
-                case 5 -> {
+                case 4 -> viewAppointmentsForPhysiotherapist(); // <-- new
+                case 5 -> bookingSystem.generateReport();
+                case 6 -> {
                     System.out.println("Exiting... Goodbye!");
                     System.exit(0);
                 }
@@ -152,4 +154,30 @@ public class Main {
             }
         }
     }
+
+    // ✅ Display all appointments for a physiotherapist (by week)
+    private static void viewAppointmentsForPhysiotherapist() {
+        System.out.print("Enter physiotherapist's full name: ");
+        String physioName = scanner.nextLine();
+        Physiotherapist physio = bookingSystem.getPhysiotherapistByName(physioName);
+
+        if (physio == null) {
+            System.out.println("Physiotherapist not found.");
+            return;
+        }
+
+        System.out.println("\nAppointments for " + physio.getFullName() + ":");
+        for (int week = 1; week <= 4; week++) {
+            List<Appointment> appointments = physio.getAvailableAppointments(week);
+            if (appointments.isEmpty()) continue;
+
+            System.out.println("\nWeek " + week + ":");
+            for (Appointment appt : appointments) {
+                String status = (appt.getPatient() == null) ? "Available" : appt.getStatus();
+                System.out.println("- " + appt.getDate() + " | " + appt.getTime() + " | " +
+                        appt.getTreatment().getTreatmentName() + " | Status: " + status);
+            }
+        }
+    }
+
 }
