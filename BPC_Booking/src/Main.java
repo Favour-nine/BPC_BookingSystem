@@ -166,18 +166,29 @@ public class Main {
             return;
         }
 
-        System.out.println("\nAppointments for " + physio.getFullName() + ":");
+        System.out.println("\nAvailable appointments for " + physio.getFullName() + ":");
+        boolean found = false;
+
         for (int week = 1; week <= 4; week++) {
             List<Appointment> appointments = physio.getAvailableAppointments(week);
-            if (appointments.isEmpty()) continue;
+            List<Appointment> available = appointments.stream()
+                    .filter(appt -> appt.getPatient() == null)
+                    .toList();
 
-            System.out.println("\nWeek " + week + ":");
-            for (Appointment appt : appointments) {
-                String status = (appt.getPatient() == null) ? "Available" : appt.getStatus();
-                System.out.println("- " + appt.getDate() + " | " + appt.getTime() + " | " +
-                        appt.getTreatment().getTreatmentName() + " | Status: " + status);
+            if (!available.isEmpty()) {
+                found = true;
+                System.out.println("\nWeek " + week + ":");
+                for (Appointment appt : available) {
+                    System.out.println("- " + appt.getDate() + " | " + appt.getTime() + " | " +
+                            appt.getTreatment().getTreatmentName() + " | Status: Available");
+                }
             }
         }
+
+        if (!found) {
+            System.out.println("No available appointments found.");
+        }
+
     }
 
 }
