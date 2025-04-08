@@ -50,8 +50,15 @@ public class Main {
         bookingSystem.addPatient(patient2);
 
         // Sample Treatments
-        Treatment treatment1 = new Treatment("Massage", "Relieves muscle tension");
-        Treatment treatment2 = new Treatment("Rehabilitation", "Post-injury recovery");
+        bookingSystem.addTreatment(new Treatment("Massage", "Relieves muscle tension"));
+        bookingSystem.addTreatment(new Treatment("Rehabilitation", "Post-injury recovery"));
+        bookingSystem.addTreatment(new Treatment("Acupuncture", "Stimulates nerves and reduces pain"));
+        bookingSystem.addTreatment(new Treatment("Spine Mobilisation", "Mobilises spine and joints"));
+        bookingSystem.addTreatment(new Treatment("Pool Therapy", "Water-based physical therapy"));
+        bookingSystem.addTreatment(new Treatment("Neural Mobilisation", "Enhances nerve movement"));
+
+        // Generate a timetable for all physiotherapists using these treatments
+        bookingSystem.generateTreatmentTimetable(bookingSystem.getAllTreatments());
 
         System.out.println("Sample data initialized successfully!");
     }
@@ -89,9 +96,24 @@ public class Main {
         System.out.print("Enter Time (e.g., 10:00 AM): ");
         String time = scanner.nextLine();
 
-        Treatment treatment = new Treatment("Massage", "Relieves muscle tension"); // Placeholder
+        // ✅ Get available treatments from the system
+        List<Treatment> availableTreatments = bookingSystem.getAllTreatments();
+        System.out.println("Available Treatments:");
+        for (int i = 0; i < availableTreatments.size(); i++) {
+            System.out.println((i + 1) + ". " + availableTreatments.get(i).getTreatmentName());
+        }
+        System.out.print("Select treatment number: ");
+        int treatmentIndex = scanner.nextInt();
+        scanner.nextLine(); // consume newline
 
-        boolean success = bookingSystem.bookAppointment(patient, physio, week, date, time, treatment);
+        if (treatmentIndex < 1 || treatmentIndex > availableTreatments.size()) {
+            System.out.println("Invalid treatment selection.");
+            return;
+        }
+
+        Treatment selectedTreatment = availableTreatments.get(treatmentIndex - 1);
+
+        boolean success = bookingSystem.bookAppointment(patient, physio, week, date, time, selectedTreatment);
 
         if (success) {
             System.out.println("Appointment booked successfully!");

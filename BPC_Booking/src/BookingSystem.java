@@ -6,6 +6,7 @@ public class BookingSystem {
     private List<Physiotherapist> physiotherapists;
     private List<Patient> patients;
     private List<Appointment> appointments;
+    private List<Treatment> treatments = new ArrayList<>();
 
     // Constructor
     public BookingSystem() {
@@ -60,6 +61,15 @@ public class BookingSystem {
             }
         }
         return null;
+    }
+    // Adds a new treatment to the system
+    public void addTreatment(Treatment treatment) {
+        treatments.add(treatment);
+    }
+
+    // Returns a copy of the treatment list for display or booking
+    public List<Treatment> getAllTreatments() {
+        return new ArrayList<>(treatments); // Avoids direct modification
     }
 
     // Book an appointment only if no time conflict exists for the physiotherapist at the specified week/date/time
