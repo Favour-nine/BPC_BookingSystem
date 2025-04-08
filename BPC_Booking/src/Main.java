@@ -201,7 +201,8 @@ public class Main {
 
         boolean found = false;
 
-        for (Physiotherapist physio : bookingSystem.getPhysiotherapistsByExpertise(treatmentName)) {
+        // Go through all physiotherapists, not just by expertise
+        for (Physiotherapist physio : bookingSystem.getAllPhysiotherapists()) {
             for (int week = 1; week <= 4; week++) {
                 List<Appointment> appointments = physio.getAvailableAppointments(week);
                 List<Appointment> matches = appointments.stream()
@@ -213,14 +214,15 @@ public class Main {
                     found = true;
                     System.out.println("\n" + physio.getFullName() + " - Week " + week + ":");
                     for (Appointment appointment : matches) {
-                        System.out.println("- " + appointment.getDate() + " | " + appointment.getTime() + " | Status: Available");
+                        System.out.println("- " + appointment.getDate() + " | " + appointment.getTime() + " | "
+                                + appointment.getTreatment().getTreatmentName() + " | Status: Available");
                     }
                 }
             }
         }
 
         if (!found) {
-            System.out.println("No available appointments found for that treatment.");
+            System.out.println("No available appointments found for treatment: " + treatmentName);
         }
     }
 

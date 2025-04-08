@@ -37,6 +37,10 @@ public class BookingSystem {
         return new ArrayList<>(patients); // Returns a copy to prevent modification outside the class
     }
 
+    public List<Physiotherapist> getAllPhysiotherapists() {
+        return new ArrayList<>(physiotherapists);
+    }
+
     // Add a physiotherapist
     public void addPhysiotherapist(Physiotherapist physiotherapist) {
         physiotherapists.add(physiotherapist);
