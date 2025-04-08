@@ -8,13 +8,14 @@ public class Main {
         initializeSampleData(); // Preload data for testing
 
         while (true) {
-            System.out.println("\n=== Physiotherapy Booking System ===");
             System.out.println("1. Book an appointment");
             System.out.println("2. Cancel an appointment");
             System.out.println("3. View available physiotherapists by expertise");
-            System.out.println("4. View physiotherapist's appointments");
-            System.out.println("5. Generate report");
-            System.out.println("6. Exit");
+            System.out.println("4. View physiotherapist's available appointments");
+            System.out.println("5. Search available appointments by treatment");
+            System.out.println("6. Generate report");
+            System.out.println("7. Exit");
+
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
@@ -24,14 +25,16 @@ public class Main {
                 case 1 -> bookAppointment();
                 case 2 -> cancelAppointment();
                 case 3 -> searchPhysiotherapists();
-                case 4 -> viewAppointmentsForPhysiotherapist(); // <-- new
-                case 5 -> bookingSystem.generateReport();
-                case 6 -> {
+                case 4 -> viewAppointmentsForPhysiotherapist();
+                case 5 -> searchAppointmentsByTreatment(); // <-- new
+                case 6 -> bookingSystem.generateReport();
+                case 7 -> {
                     System.out.println("Exiting... Goodbye!");
                     System.exit(0);
                 }
                 default -> System.out.println("Invalid choice. Try again.");
             }
+
         }
     }
 
@@ -172,15 +175,15 @@ public class Main {
         for (int week = 1; week <= 4; week++) {
             List<Appointment> appointments = physio.getAvailableAppointments(week);
             List<Appointment> available = appointments.stream()
-                    .filter(appt -> appt.getPatient() == null)
+                    .filter(appointment -> appointment.getPatient() == null)
                     .toList();
 
             if (!available.isEmpty()) {
                 found = true;
                 System.out.println("\nWeek " + week + ":");
-                for (Appointment appt : available) {
-                    System.out.println("- " + appt.getDate() + " | " + appt.getTime() + " | " +
-                            appt.getTreatment().getTreatmentName() + " | Status: Available");
+                for (Appointment appointment : available) {
+                    System.out.println("- " + appointment.getDate() + " | " + appointment.getTime() + " | " +
+                            appointment.getTreatment().getTreatmentName() + " | Status: Available");
                 }
             }
         }
@@ -189,6 +192,36 @@ public class Main {
             System.out.println("No available appointments found.");
         }
 
+    }
+
+    // Search and display available appointments by treatment name
+    private static void searchAppointmentsByTreatment() {
+        System.out.print("Enter treatment name: ");
+        String treatmentName = scanner.nextLine().trim().toLowerCase();
+
+        boolean found = false;
+
+        for (Physiotherapist physio : bookingSystem.getPhysiotherapistsByExpertise(treatmentName)) {
+            for (int week = 1; week <= 4; week++) {
+                List<Appointment> appointments = physio.getAvailableAppointments(week);
+                List<Appointment> matches = appointments.stream()
+                        .filter(appointment -> appointment.getPatient() == null &&
+                                appointment.getTreatment().getTreatmentName().toLowerCase().contains(treatmentName))
+                        .toList();
+
+                if (!matches.isEmpty()) {
+                    found = true;
+                    System.out.println("\n" + physio.getFullName() + " - Week " + week + ":");
+                    for (Appointment appointment : matches) {
+                        System.out.println("- " + appointment.getDate() + " | " + appointment.getTime() + " | Status: Available");
+                    }
+                }
+            }
+        }
+
+        if (!found) {
+            System.out.println("No available appointments found for that treatment.");
+        }
     }
 
 }
