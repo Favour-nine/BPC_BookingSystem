@@ -15,7 +15,8 @@ public class Main {
             System.out.println("5. View physiotherapist's available appointments");
             System.out.println("6. Search available appointments by treatment");
             System.out.println("7. Generate report");
-            System.out.println("8. Exit");
+            System.out.println("8. View your appointments");
+            System.out.println("9. Exit");
 
             System.out.print("Enter your choice: ");
 
@@ -30,7 +31,8 @@ public class Main {
                 case 5 -> viewAppointmentsForPhysiotherapist();
                 case 6 -> searchAppointmentsByTreatment(); // <-- new
                 case 7 -> bookingSystem.generateReport();
-                case 8 -> {
+                case 8 -> viewAppointmentsForPatient();
+                case 9 -> {
                     System.out.println("Exiting... Goodbye!");
                     System.exit(0);
                 }
@@ -299,5 +301,37 @@ public class Main {
             System.out.println("Failed to book. Appointment may have already been taken.");
         }
     }
+
+    // View all appointments for a given patient by ID
+    private static void viewAppointmentsForPatient() {
+        System.out.print("Enter your Patient ID: ");
+        String patientID = scanner.nextLine().trim();
+
+        Patient patient = bookingSystem.getPatients().stream()
+                .filter(p -> p.getUniqueId().equalsIgnoreCase(patientID))
+                .findFirst()
+                .orElse(null);
+
+        if (patient == null) {
+            System.out.println("Patient not found. Please check your ID.");
+            return;
+        }
+
+        List<Appointment> appointments = patient.getAppointments();
+
+        if (appointments.isEmpty()) {
+            System.out.println("You have no appointments booked.");
+        } else {
+            System.out.println("Your Appointments:");
+            for (Appointment appointment : appointments) {
+                System.out.println("- Date: " + appointment.getDate() +
+                        " | Time: " + appointment.getTime() +
+                        " | Treatment: " + appointment.getTreatment().getTreatmentName() +
+                        " | Physiotherapist: " + appointment.getPhysiotherapist().getFullName() +
+                        " | Status: " + appointment.getStatus());
+            }
+        }
+    }
+
 
 }
