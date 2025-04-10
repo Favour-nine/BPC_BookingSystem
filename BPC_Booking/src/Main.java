@@ -8,13 +8,14 @@ public class Main {
         initializeSampleData(); // Preload data for testing
 
         while (true) {
-            System.out.println("1. Book an appointment");
-            System.out.println("2. Cancel an appointment");
-            System.out.println("3. View available physiotherapists by expertise");
-            System.out.println("4. View physiotherapist's available appointments");
-            System.out.println("5. Search available appointments by treatment");
-            System.out.println("6. Generate report");
-            System.out.println("7. Exit");
+            System.out.println("1. Register new patient");
+            System.out.println("2. Book an appointment");
+            System.out.println("3. Cancel an appointment");
+            System.out.println("4. View available physiotherapists by expertise");
+            System.out.println("5. View physiotherapist's available appointments");
+            System.out.println("6. Search available appointments by treatment");
+            System.out.println("7. Generate report");
+            System.out.println("8. Exit");
 
             System.out.print("Enter your choice: ");
 
@@ -22,13 +23,14 @@ public class Main {
             scanner.nextLine(); // Consume newline
 
             switch (choice) {
-                case 1 -> bookAppointment();
-                case 2 -> cancelAppointment();
-                case 3 -> searchPhysiotherapists();
-                case 4 -> viewAppointmentsForPhysiotherapist();
-                case 5 -> searchAppointmentsByTreatment(); // <-- new
-                case 6 -> bookingSystem.generateReport();
-                case 7 -> {
+                case 1 -> registerNewPatient();
+                case 2 -> bookAppointment();
+                case 3 -> cancelAppointment();
+                case 4 -> searchPhysiotherapists();
+                case 5 -> viewAppointmentsForPhysiotherapist();
+                case 6 -> searchAppointmentsByTreatment(); // <-- new
+                case 7 -> bookingSystem.generateReport();
+                case 8 -> {
                     System.out.println("Exiting... Goodbye!");
                     System.exit(0);
                 }
@@ -67,6 +69,26 @@ public class Main {
 
         System.out.println("Sample data initialized successfully!");
     }
+
+    // Register a new patient and show their unique ID
+    private static void registerNewPatient() {
+        System.out.print("Enter full name: ");
+        String fullName = scanner.nextLine();
+
+        System.out.print("Enter phone number: ");
+        String phone = scanner.nextLine();
+
+        System.out.print("Enter address: ");
+        String address = scanner.nextLine();
+
+        Patient newPatient = new Patient(fullName, phone, address);
+        bookingSystem.addPatient(newPatient);
+
+        System.out.println("\n✅ Registration successful!");
+        System.out.println("Your Patient ID is: " + newPatient.getUniqueId());
+        System.out.println("Please keep your Patient ID safe and do not share it with anyone.");
+    }
+
 
     // ✅ Book an appointment
     private static void bookAppointment() {
