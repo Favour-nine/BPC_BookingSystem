@@ -199,30 +199,82 @@ public class Main {
         System.out.print("Enter treatment name: ");
         String treatmentName = scanner.nextLine().trim().toLowerCase();
 
-        boolean found = false;
+        List<Appointment> foundAppointments = new ArrayList<>();
 
-        // Go through all physiotherapists, not just by expertise
         for (Physiotherapist physio : bookingSystem.getAllPhysiotherapists()) {
             for (int week = 1; week <= 4; week++) {
                 List<Appointment> appointments = physio.getAvailableAppointments(week);
-                List<Appointment> matches = appointments.stream()
-                        .filter(appointment -> appointment.getPatient() == null &&
-                                appointment.getTreatment().getTreatmentName().toLowerCase().contains(treatmentName))
-                        .toList();
-
-                if (!matches.isEmpty()) {
-                    found = true;
-                    System.out.println("\n" + physio.getFullName() + " - Week " + week + ":");
-                    for (Appointment appointment : matches) {
-                        System.out.println("- " + appointment.getDate() + " | " + appointment.getTime() + " | "
-                                + appointment.getTreatment().getTreatmentName() + " | Status: Available");
+                for (Appointment appointment : appointments) {
+                    if (appointment.getPatient() == null &&
+                            appointment.getTreatment().getTreatmentName().toLowerCase().contains(treatmentName)) {
+                        foundAppointments.add(appointment);
+                        System.out.println("\nPhysiotherapist: " + physio.getFullName() +
+                                "\nWeek: " + week +
+                                "\nDate: " + appointment.getDate() +
+                                "\nTime: " + appointment.getTime() +
+                                "\nTreatment: " + appointment.getTreatment().getTreatmentName() +
+                                "\nStatus: Available\n");
                     }
                 }
             }
         }
 
-        if (!found) {
+        if (foundAppointments.isEmpty()) {
             System.out.println("No available appointments found for treatment: " + treatmentName);
+            return;
+        }
+
+        System.out.print("Would you like to book one of these appointments? (yes/no): ");
+        String response = scanner.nextLine().trim().toLowerCase();
+        if (!response.equals("yes")) return;
+
+        System.out.print("Enter Patient ID: ");
+        String patientID = scanner.nextLine();
+        Patient patient = bookingSystem.getPatients().stream()
+                .filter(p -> p.getUniqueId().equals(patientID))
+                .findFirst()
+                .orElse(null);
+
+        if (patient == null) {
+            System.out.println("Patient not found.");
+            return;
+        }
+
+        System.out.print("Enter Physiotherapist Name: ");
+        String physioName = scanner.nextLine();
+        Physiotherapist physio = bookingSystem.getPhysiotherapistByName(physioName);
+        if (physio == null) {
+            System.out.println("Physiotherapist not found.");
+            return;
+        }
+
+        System.out.print("Enter Date (yyyy-MM-dd): ");
+        String date = scanner.nextLine();
+        System.out.print("Enter Time (e.g., 10:00): ");
+        String time = scanner.nextLine();
+
+        // Guess the week from date — for simplicity, ask for it directly
+        System.out.print("Enter Week Number (1–4): ");
+        int week = Integer.parseInt(scanner.nextLine());
+
+        // Find the treatment from available treatments again (or use fixed input)
+        Treatment selectedTreatment = physio.getAvailableAppointments(week).stream()
+                .filter(app -> app.getTime().equals(time) && app.getDate().toString().equals(date))
+                .map(Appointment::getTreatment)
+                .findFirst()
+                .orElse(null);
+
+        if (selectedTreatment == null) {
+            System.out.println("No matching appointment found at that time.");
+            return;
+        }
+
+        boolean success = bookingSystem.bookAppointment(patient, physio, week, date, time, selectedTreatment);
+
+        if (success) {
+            System.out.println("Appointment booked successfully!");
+        } else {
+            System.out.println("Failed to book. Appointment may have already been taken.");
         }
     }
 
