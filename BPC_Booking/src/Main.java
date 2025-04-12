@@ -16,7 +16,8 @@ public class Main {
             System.out.println("6. Search available appointments by treatment");
             System.out.println("7. Generate report");
             System.out.println("8. View your appointments");
-            System.out.println("9. Exit");
+            System.out.println("9. Check in to an appointment");
+            System.out.println("10. Exit");
 
             System.out.print("Enter your choice: ");
 
@@ -32,7 +33,8 @@ public class Main {
                 case 6 -> searchAppointmentsByTreatment(); // <-- new
                 case 7 -> bookingSystem.generateReport();
                 case 8 -> viewAppointmentsForPatient();
-                case 9 -> {
+                case 9 -> checkInAppointment();
+                case 10 -> {
                     System.out.println("Exiting... Goodbye!");
                     System.exit(0);
                 }
@@ -42,7 +44,7 @@ public class Main {
         }
     }
 
-    // ✅ Preload some sample physiotherapists, patients, and treatments
+    //  Preload some sample physiotherapists, patients, and treatments
     private static void initializeSampleData() {
         // Sample Physiotherapists
         Physiotherapist physio1 = new Physiotherapist("Dr. James Smith", "123-456-7890", "123 Main St", Arrays.asList("Rehabilitation", "Osteopathy"));
@@ -92,7 +94,7 @@ public class Main {
     }
 
 
-    // ✅ Book an appointment
+    // Book an appointment
     private static void bookAppointment() {
         System.out.print("Enter Patient ID: ");
         String patientID = scanner.nextLine();
@@ -125,7 +127,7 @@ public class Main {
         System.out.print("Enter Time (e.g., 10:00 AM): ");
         String time = scanner.nextLine();
 
-        // ✅ Get available treatments from the system
+        // Get available treatments from the system
         List<Treatment> availableTreatments = bookingSystem.getAllTreatments();
         System.out.println("Available Treatments:");
         for (int i = 0; i < availableTreatments.size(); i++) {
@@ -151,7 +153,7 @@ public class Main {
         }
     }
 
-    // ✅ Cancel an appointment
+    // Cancel an appointment
     private static void cancelAppointment() {
         System.out.print("Enter Appointment ID to cancel: ");
         String appointmentID = scanner.nextLine();
@@ -165,7 +167,7 @@ public class Main {
         }
     }
 
-    // ✅ Search physiotherapists by expertise
+    //  Search physiotherapists by expertise
     private static void searchPhysiotherapists() {
         System.out.print("Enter area of expertise: ");
         String expertise = scanner.nextLine();
@@ -182,7 +184,7 @@ public class Main {
         }
     }
 
-    // ✅ Display all appointments for a physiotherapist (by week)
+    // Display all appointments for a physiotherapist (by week)
     private static void viewAppointmentsForPhysiotherapist() {
         System.out.print("Enter physiotherapist's full name: ");
         String physioName = scanner.nextLine();
@@ -217,6 +219,7 @@ public class Main {
         }
 
     }
+
 
     // Search and display available appointments by treatment name
     private static void searchAppointmentsByTreatment() {
@@ -332,6 +335,54 @@ public class Main {
             }
         }
     }
+    // Allow a patient to check in to an upcoming appointment
+    private static void checkInAppointment() {
+        System.out.print("Enter your Patient ID: ");
+        String patientID = scanner.nextLine().trim();
+
+        Patient patient = bookingSystem.getPatients().stream()
+                .filter(p -> p.getUniqueId().equalsIgnoreCase(patientID))
+                .findFirst()
+                .orElse(null);
+
+        if (patient == null) {
+            System.out.println("Patient not found.");
+            return;
+        }
+
+        List<Appointment> appointments = patient.getAppointments();
+
+        List<Appointment> upcoming = appointments.stream()
+                .filter(app -> !"Attended".equalsIgnoreCase(app.getStatus()))
+                .toList();
+
+        if (upcoming.isEmpty()) {
+            System.out.println("You have no upcoming appointments to check in.");
+            return;
+        }
+
+        System.out.println("Upcoming Appointments:");
+        for (int i = 0; i < upcoming.size(); i++) {
+            Appointment app = upcoming.get(i);
+            System.out.println((i + 1) + ". " + app.getDate() + " | " + app.getTime() + " | " +
+                    app.getTreatment().getTreatmentName() + " | Physiotherapist: " +
+                    app.getPhysiotherapist().getFullName() + " | Status: " + app.getStatus());
+        }
+
+        System.out.print("Select appointment number to check in: ");
+        int choice = Integer.parseInt(scanner.nextLine());
+
+        if (choice < 1 || choice > upcoming.size()) {
+            System.out.println("Invalid selection.");
+            return;
+        }
+
+        Appointment selected = upcoming.get(choice - 1);
+        selected.setStatus("Attended");
+
+        System.out.println("You are now checked in for your appointment.");
+    }
+
 
 
 }

@@ -49,6 +49,10 @@ public class Appointment {
         return status;
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     // Methods to update appointment status
     public void book(){
         this.status = "Booked";
