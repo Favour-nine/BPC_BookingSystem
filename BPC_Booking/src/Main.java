@@ -21,8 +21,15 @@ public class Main {
 
             System.out.print("Enter your choice: ");
 
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            int choice;
+
+            try {
+                System.out.print("Enter your choice: ");
+                choice = Integer.parseInt(scanner.nextLine().trim()); // safer than scanner.nextInt()
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number between 1 and 10.");
+                continue; // Go back to the top of the loop
+            }
 
             switch (choice) {
                 case 1 -> registerNewPatient();
@@ -38,7 +45,7 @@ public class Main {
                     System.out.println("Exiting... Goodbye!");
                     System.exit(0);
                 }
-                default -> System.out.println("Invalid choice. Try again.");
+                default -> System.out.println("Invalid choice. Please select a number from 1 to 10.");
             }
 
         }
