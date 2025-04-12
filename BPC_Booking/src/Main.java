@@ -124,9 +124,18 @@ public class Main {
             return;
         }
 
-        System.out.print("Enter Week Number (1-4): ");
-        int week = scanner.nextInt();
-        scanner.nextLine();
+        int week;
+        try {
+            System.out.print("Enter Week Number (1-4): ");
+            week = Integer.parseInt(scanner.nextLine().trim());
+            if (week < 1 || week > 4) {
+                System.out.println("Invalid week number. Please enter a number between 1 and 4.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a number.");
+            return;
+        }
 
         System.out.print("Enter Date (e.g., 2025-04-15): ");
         String date = scanner.nextLine();
@@ -140,9 +149,18 @@ public class Main {
         for (int i = 0; i < availableTreatments.size(); i++) {
             System.out.println((i + 1) + ". " + availableTreatments.get(i).getTreatmentName());
         }
-        System.out.print("Select treatment number: ");
-        int treatmentIndex = scanner.nextInt();
-        scanner.nextLine(); // consume newline
+        int treatmentIndex;
+        try {
+            System.out.print("Select treatment number: ");
+            treatmentIndex = Integer.parseInt(scanner.nextLine().trim());
+            if (treatmentIndex < 1 || treatmentIndex > availableTreatments.size()) {
+                System.out.println("Invalid treatment selection.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid treatment number.");
+            return;
+        }
 
         if (treatmentIndex < 1 || treatmentIndex > availableTreatments.size()) {
             System.out.println("Invalid treatment selection.");
