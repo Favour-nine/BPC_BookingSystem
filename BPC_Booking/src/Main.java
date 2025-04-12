@@ -8,47 +8,35 @@ public class Main {
         initializeSampleData(); // Preload data for testing
 
         while (true) {
-            System.out.println("1. Register new patient");
-            System.out.println("2. Book an appointment");
-            System.out.println("3. Cancel an appointment");
-            System.out.println("4. View available physiotherapists by expertise");
-            System.out.println("5. View physiotherapist's available appointments");
-            System.out.println("6. Search available appointments by treatment");
-            System.out.println("7. Generate report");
-            System.out.println("8. View your appointments");
-            System.out.println("9. Check in to an appointment");
-            System.out.println("10. Exit");
-
+            System.out.println("\n=== Physiotherapy Booking System ===");
+            System.out.println("[1] Patient Self-Service");
+            System.out.println("[2] Booking Management");
+            System.out.println("[3] Search & Discovery");
+            System.out.println("[4] Reports");
+            System.out.println("[0] Exit");
             System.out.print("Enter your choice: ");
 
             int choice;
-
             try {
-                System.out.print("Enter your choice: ");
-                choice = Integer.parseInt(scanner.nextLine().trim()); // safer than scanner.nextInt()
+                choice = Integer.parseInt(scanner.nextLine().trim());
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number between 1 and 10.");
-                continue; // Go back to the top of the loop
+                System.out.println("Invalid input. Please enter a number.");
+                continue;
             }
 
             switch (choice) {
-                case 1 -> registerNewPatient();
-                case 2 -> bookAppointment();
-                case 3 -> cancelAppointment();
-                case 4 -> searchPhysiotherapists();
-                case 5 -> viewAppointmentsForPhysiotherapist();
-                case 6 -> searchAppointmentsByTreatment(); // <-- new
-                case 7 -> bookingSystem.generateReport();
-                case 8 -> viewAppointmentsForPatient();
-                case 9 -> checkInAppointment();
-                case 10 -> {
+                case 1 -> patientSelfServiceMenu();
+                case 2 -> bookingManagementMenu();
+                case 3 -> searchMenu();
+                case 4 -> reportMenu();
+                case 0 -> {
                     System.out.println("Exiting... Goodbye!");
                     System.exit(0);
                 }
-                default -> System.out.println("Invalid choice. Please select a number from 1 to 10.");
+                default -> System.out.println("Invalid choice. Try again.");
             }
-
         }
+
     }
 
     //  Preload some sample physiotherapists, patients, and treatments
@@ -80,6 +68,101 @@ public class Main {
 
         System.out.println("Sample data initialized successfully!");
     }
+
+    //Patient Self service option
+    private static void patientSelfServiceMenu() {
+        while (true) {
+            System.out.println("\n=== Patient Self-Service ===");
+            System.out.println("[1] Register as a new patient");
+            System.out.println("[2] View my appointments");
+            System.out.println("[0] Back to main menu");
+            System.out.print("Enter your choice: ");
+
+            try {
+                int choice = Integer.parseInt(scanner.nextLine().trim());
+                switch (choice) {
+                    case 1 -> registerNewPatient();
+                    case 2 -> viewAppointmentsForPatient();
+                    case 0 -> { return; }
+                    default -> System.out.println("Invalid choice.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input.");
+            }
+        }
+    }
+
+    //Booking management option
+    private static void bookingManagementMenu() {
+        while (true) {
+            System.out.println("\n=== Booking Management ===");
+            System.out.println("[1] Book an appointment");
+            System.out.println("[2] Cancel an appointment");
+            System.out.println("[3] Check in to an appointment");
+            System.out.println("[0] Back to main menu");
+            System.out.print("Enter your choice: ");
+
+            try {
+                int choice = Integer.parseInt(scanner.nextLine().trim());
+                switch (choice) {
+                    case 1 -> bookAppointment();
+                    case 2 -> cancelAppointment();
+                    case 3 -> checkInAppointment();
+                    case 0 -> { return; }
+                    default -> System.out.println("Invalid choice.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input.");
+            }
+        }
+    }
+
+    private static void searchMenu() {
+        while (true) {
+            System.out.println("\n=== Search & Discovery ===");
+            System.out.println("[1] Find physiotherapists by expertise");
+            System.out.println("[2] View physiotherapist availability");
+            System.out.println("[3] Search appointments by treatment");
+            System.out.println("[0] Back to main menu");
+            System.out.print("Enter your choice: ");
+
+            try {
+                int choice = Integer.parseInt(scanner.nextLine().trim());
+                switch (choice) {
+                    case 1 -> searchPhysiotherapists();
+                    case 2 -> viewAppointmentsForPhysiotherapist();
+                    case 3 -> searchAppointmentsByTreatment();
+                    case 0 -> { return; }
+                    default -> System.out.println("Invalid choice.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input.");
+            }
+        }
+    }
+
+    private static void reportMenu() {
+        while (true) {
+            System.out.println("\n=== Reports ===");
+            System.out.println("[1] Generate appointment report");
+            System.out.println("[0] Back to main menu");
+            System.out.print("Enter your choice: ");
+
+            try {
+                int choice = Integer.parseInt(scanner.nextLine().trim());
+                switch (choice) {
+                    case 1 -> bookingSystem.generateReport();
+                    case 0 -> { return; }
+                    default -> System.out.println("Invalid choice.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input.");
+            }
+        }
+    }
+
+
+
 
     // Register a new patient and show their unique ID
     private static void registerNewPatient() {
