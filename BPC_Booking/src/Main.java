@@ -1,3 +1,5 @@
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Main {
@@ -172,9 +174,9 @@ public class Main {
         while (true) {
             System.out.print("Enter full name: ");
             fullName = scanner.nextLine().trim();
-            // Regex check: only letters and spaces, and at least two words&#8203;:contentReference[oaicite:6]{index=6}&#8203;:contentReference[oaicite:7]{index=7}
+            // Regex check: only letters and spaces, and at least two words
             if (!fullName.matches("^[A-Za-z]+(?:\\s+[A-Za-z]+)+$")) {
-                System.out.println("❌ Full name must contain only letters and include at least a first and last name. Please try again.");
+                System.out.println(" Full name must contain only letters and include at least a first and last name. Please try again.");
             } else {
                 break;
             }
@@ -185,9 +187,9 @@ public class Main {
         while (true) {
             System.out.print("Enter phone number: ");
             phone = scanner.nextLine().trim();
-            // Regex check: only digits and at least 10 of them&#8203;:contentReference[oaicite:8]{index=8}
+            // Regex check: only digits and at least 10 of them
             if (!phone.matches("^\\d{10,}$")) {
-                System.out.println("❌ Phone number must be numeric and at least 10 digits long. Please try again.");
+                System.out.println(" Phone number must be numeric and at least 10 digits long. Please try again.");
             } else {
                 break;
             }
@@ -360,6 +362,7 @@ public class Main {
         String treatmentName = scanner.nextLine().trim().toLowerCase();
 
         List<Appointment> foundAppointments = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         for (Physiotherapist physio : bookingSystem.getAllPhysiotherapists()) {
             for (int week = 1; week <= 4; week++) {
@@ -384,7 +387,7 @@ public class Main {
             return;
         }
 
-        System.out.print("Would you like to book one of these appointments? (yes/no): ");
+        System.out.print("\nWould you like to book one of these appointments? (yes/no): ");
         String response = scanner.nextLine().trim().toLowerCase();
         if (!response.equals("yes")) return;
 
@@ -409,14 +412,21 @@ public class Main {
         }
 
         System.out.print("Enter Date (yyyy-MM-dd): ");
-        String date = scanner.nextLine();
-        System.out.print("Enter Time (e.g., 10:00): ");
-        String time = scanner.nextLine();
+        String date = scanner.nextLine().trim();
+        Date inputDate;
+        try {
+            inputDate = sdf.parse(date);
+        } catch (ParseException e) {
+            System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+            return;
+        }
 
-        // Guess the week from date — for simplicity, ask for it directly
+        System.out.print("Enter Time (e.g., 10:00): ");
+        String time = scanner.nextLine().trim();
+
+        System.out.print("Enter Week Number (1–4): ");
         int week;
         try {
-            System.out.print("Enter Week Number (1–4): ");
             week = Integer.parseInt(scanner.nextLine().trim());
             if (week < 1 || week > 4) {
                 System.out.println("Invalid week number.");
@@ -428,25 +438,26 @@ public class Main {
         }
 
 
-        // Find the treatment from available treatments again (or use fixed input)
-        Treatment selectedTreatment = physio.getAvailableAppointments(week).stream()
-                .filter(app -> app.getTime().equals(time) && app.getDate().toString().equals(date))
-                .map(Appointment::getTreatment)
+        Appointment match = physio.getAvailableAppointments(week).stream()
+                .filter(app -> app.getPatient() == null &&
+                        app.getTime().equals(time) &&
+                        sdf.format(app.getDate()).equals(sdf.format(inputDate)))
                 .findFirst()
                 .orElse(null);
 
-        if (selectedTreatment == null) {
+        if (match == null) {
             System.out.println("No matching appointment found at that time.");
             return;
         }
 
-        boolean success = bookingSystem.bookAppointment(patient, physio, week, date, time, selectedTreatment);
+        boolean success = bookingSystem.bookAppointment(patient, physio, week, date, time, match.getTreatment());
 
         if (success) {
-            System.out.println("Appointment booked successfully!");
+            System.out.println(" Appointment booked successfully!");
         } else {
-            System.out.println("Failed to book. Appointment may have already been taken.");
+            System.out.println(" Failed to book. Appointment may already be taken.");
         }
+
     }
 
     // View all appointments for a given patient by ID
