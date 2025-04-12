@@ -162,11 +162,6 @@ public class Main {
             return;
         }
 
-        if (treatmentIndex < 1 || treatmentIndex > availableTreatments.size()) {
-            System.out.println("Invalid treatment selection.");
-            return;
-        }
-
         Treatment selectedTreatment = availableTreatments.get(treatmentIndex - 1);
 
         boolean success = bookingSystem.bookAppointment(patient, physio, week, date, time, selectedTreatment);
@@ -306,8 +301,19 @@ public class Main {
         String time = scanner.nextLine();
 
         // Guess the week from date — for simplicity, ask for it directly
-        System.out.print("Enter Week Number (1–4): ");
-        int week = Integer.parseInt(scanner.nextLine());
+        int week;
+        try {
+            System.out.print("Enter Week Number (1–4): ");
+            week = Integer.parseInt(scanner.nextLine().trim());
+            if (week < 1 || week > 4) {
+                System.out.println("Invalid week number.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a number.");
+            return;
+        }
+
 
         // Find the treatment from available treatments again (or use fixed input)
         Treatment selectedTreatment = physio.getAvailableAppointments(week).stream()
@@ -395,12 +401,19 @@ public class Main {
         }
 
         System.out.print("Select appointment number to check in: ");
-        int choice = Integer.parseInt(scanner.nextLine());
-
-        if (choice < 1 || choice > upcoming.size()) {
-            System.out.println("Invalid selection.");
+        int choice;
+        try {
+            System.out.print("Select appointment number to check in: ");
+            choice = Integer.parseInt(scanner.nextLine().trim());
+            if (choice < 1 || choice > upcoming.size()) {
+                System.out.println("Invalid selection.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a number.");
             return;
         }
+
 
         Appointment selected = upcoming.get(choice - 1);
         selected.setStatus("Attended");
