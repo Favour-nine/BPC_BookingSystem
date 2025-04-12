@@ -165,24 +165,54 @@ public class Main {
 
 
     // Register a new patient and show their unique ID
+// Register a new patient and show their unique ID with input validation
     private static void registerNewPatient() {
-        System.out.print("Enter full name: ");
-        String fullName = scanner.nextLine();
+        String fullName;
+        // Validate full name (letters only and at least two words)
+        while (true) {
+            System.out.print("Enter full name: ");
+            fullName = scanner.nextLine().trim();
+            // Regex check: only letters and spaces, and at least two words&#8203;:contentReference[oaicite:6]{index=6}&#8203;:contentReference[oaicite:7]{index=7}
+            if (!fullName.matches("^[A-Za-z]+(?:\\s+[A-Za-z]+)+$")) {
+                System.out.println("❌ Full name must contain only letters and include at least a first and last name. Please try again.");
+            } else {
+                break;
+            }
+        }
 
-        System.out.print("Enter phone number: ");
-        String phone = scanner.nextLine();
+        String phone;
+        // Validate phone number (numeric and >= 10 digits)
+        while (true) {
+            System.out.print("Enter phone number: ");
+            phone = scanner.nextLine().trim();
+            // Regex check: only digits and at least 10 of them&#8203;:contentReference[oaicite:8]{index=8}
+            if (!phone.matches("^\\d{10,}$")) {
+                System.out.println("❌ Phone number must be numeric and at least 10 digits long. Please try again.");
+            } else {
+                break;
+            }
+        }
 
-        System.out.print("Enter address: ");
-        String address = scanner.nextLine();
+        String address;
+        // Validate address (non-empty and sufficiently long)
+        while (true) {
+            System.out.print("Enter address: ");
+            address = scanner.nextLine().trim();
+            if (address.length() < 4) {  // "more than a few characters" – here we require at least 4
+                System.out.println(" Address must be longer than a few characters. Please try again.");
+            } else {
+                break;
+            }
+        }
 
+        // All inputs are valid at this point, proceed to create the patient
         Patient newPatient = new Patient(fullName, phone, address);
         bookingSystem.addPatient(newPatient);
 
-        System.out.println("\n✅ Registration successful!");
+        System.out.println("\n Registration successful!");
         System.out.println("Your Patient ID is: " + newPatient.getUniqueId());
         System.out.println("Please keep your Patient ID safe and do not share it with anyone.");
     }
-
 
     // Book an appointment
     private static void bookAppointment() {
