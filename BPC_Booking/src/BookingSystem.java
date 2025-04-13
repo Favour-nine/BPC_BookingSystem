@@ -158,6 +158,20 @@ public class BookingSystem {
         System.out.println("Weekday schedule (7 sessions/day, Mon–Fri) generated for all physiotherapists.");
     }
 
+    public int getWeekFromDate(Date date) {
+        Calendar base = Calendar.getInstance();
+        base.set(2025, Calendar.MAY, 5); // Week 1 start
+
+        Calendar target = Calendar.getInstance();
+        target.setTime(date);
+
+        long diff = target.getTimeInMillis() - base.getTimeInMillis();
+        int days = (int) (diff / (1000 * 60 * 60 * 24));
+
+        return (days / 7) + 1;
+    }
+
+
 
 
 }
