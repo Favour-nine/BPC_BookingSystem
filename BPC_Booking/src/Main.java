@@ -239,21 +239,22 @@ public class Main {
             return;
         }
 
-        int week;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date;
         try {
-            System.out.print("Enter Week Number (1-4): ");
-            week = Integer.parseInt(scanner.nextLine().trim());
-            if (week < 1 || week > 4) {
-                System.out.println("Invalid week number. Please enter a number between 1 and 4.");
-                return;
-            }
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input. Please enter a number.");
+            System.out.print("Enter Date (yyyy-MM-dd): ");
+            String dateInput = scanner.nextLine().trim();
+            date = sdf.parse(dateInput);
+        } catch (ParseException e) {
+            System.out.println("Invalid date format. Please use yyyy-MM-dd.");
             return;
         }
 
+        int week = bookingSystem.getWeekFromDate(date);
+
+
         System.out.print("Enter Date (e.g., 2025-04-15): ");
-        String date = scanner.nextLine();
+
 
         System.out.print("Enter Time (e.g., 10:00 AM): ");
         String time = scanner.nextLine();
@@ -278,8 +279,8 @@ public class Main {
         }
 
         Treatment selectedTreatment = availableTreatments.get(treatmentIndex - 1);
-
-        boolean success = bookingSystem.bookAppointment(patient, physio, week, date, time, selectedTreatment);
+        String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+        boolean success = bookingSystem.bookAppointment(patient, physio, week, formattedDate, time, selectedTreatment);
 
         if (success) {
             System.out.println("Appointment booked successfully!");
