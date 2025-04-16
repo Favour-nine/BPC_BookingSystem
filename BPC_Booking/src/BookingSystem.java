@@ -6,6 +6,9 @@ import java.io.ObjectInputStream;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.FileWriter;
+
 
 public class BookingSystem {
     // Attributes
@@ -159,10 +162,33 @@ public class BookingSystem {
                             ", Time: " + appointment.getTime() +
                             ", Physiotherapist: " + appointment.getPhysiotherapist().getFullName() +
                             ", Patient: " + appointment.getPatient().getFullName() +
-                            ", Status: " + appointment.getStatus()
+                            ", Status: " + appointment.getStatus() +
+                            "Appointment ID: " + appointment.getAppointmentID()
             );
         }
     }
+
+    public void exportReportToFile(String filename) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
+            writer.println("=== Appointment Report ===");
+
+            for (Appointment appointment : appointments) {
+                writer.println("Appointment ID: " + appointment.getAppointmentID());
+                writer.println("Date: " + appointment.getDate());
+                writer.println("Time: " + appointment.getTime());
+                writer.println("Patient: " + appointment.getPatient().getFullName());
+                writer.println("Physiotherapist: " + appointment.getPhysiotherapist().getFullName());
+                writer.println("Treatment: " + appointment.getTreatment().getTreatmentName());
+                writer.println("Status: " + appointment.getStatus());
+                writer.println("------------------------------");
+            }
+
+            System.out.println(" Report successfully exported to: " + filename);
+        } catch (IOException e) {
+            System.out.println(" Failed to write report: " + e.getMessage());
+        }
+    }
+
 
     // Generate 4-week timetable with treatments for all physiotherapists
     public void generateTreatmentTimetable(List<Treatment> treatments) {

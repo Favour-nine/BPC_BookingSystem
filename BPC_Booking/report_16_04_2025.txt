@@ -1,0 +1,25 @@
+=== Appointment Report ===
+Appointment ID: 65ada2f6-c657-4350-a9b0-1153d647dd34
+Date: Thu May 22 00:00:00 BST 2025
+Time: 11:00
+Patient: Favour Odikagbo
+Physiotherapist: Dr. James Smith
+Treatment: Massage
+Status: Booked
+------------------------------
+Appointment ID: 015ef967-e4ec-4846-ba76-a96969ef58c1
+Date: Wed Jun 25 00:00:00 BST 2025
+Time: 11:00
+Patient: Daniel Oyemeku
+Physiotherapist: Dr. Sarah Johnson
+Treatment: Pool Therapy
+Status: Booked
+------------------------------
+Appointment ID: 0e1267b4-aca1-4829-b43c-80ab175ff84b
+Date: Mon Jun 16 00:00:00 BST 2025
+Time: 12:00
+Patient: Daniel Oyemeku
+Physiotherapist: Dr. James Smith
+Treatment: Acupuncture
+Status: Attended
+------------------------------

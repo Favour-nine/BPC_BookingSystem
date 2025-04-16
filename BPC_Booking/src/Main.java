@@ -36,7 +36,8 @@ public class Main {
             System.out.println("[1] Patient Self-Service");
             System.out.println("[2] Booking Management");
             System.out.println("[3] Search & Discovery");
-            System.out.println("[4] Reports");
+            System.out.println("[4] Generate appointment report");
+            System.out.println("[5] Export report to file");
             System.out.println("[0] Exit");
             System.out.print("Enter your choice: ");
 
@@ -53,6 +54,11 @@ public class Main {
                 case 2 -> bookingManagementMenu();
                 case 3 -> searchMenu();
                 case 4 -> reportMenu();
+                case 5 -> {
+                    System.out.print("Enter filename to save report (e.g., report.txt): ");
+                    String filename = scanner.nextLine();
+                    bookingSystem.exportReportToFile(filename);
+                }
                 case 0 -> {
                     bookingSystem.saveData(bookingSystem.getPatients(), "patients.dat");
                     bookingSystem.saveData(bookingSystem.getAppointments(), "appointments.dat");
