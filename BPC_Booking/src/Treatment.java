@@ -1,7 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
 
-public class Treatment {
+public class Treatment implements Serializable {
     // Attributes
     private String treatmentName;
     private String description;

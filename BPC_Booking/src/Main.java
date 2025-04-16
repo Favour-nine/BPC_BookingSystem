@@ -9,13 +9,30 @@ public class Main {
     public static void main(String[] args) {
 // Load existing data or initialize fresh sample data
         @SuppressWarnings("unchecked")
+        List<Physiotherapist> loadedPhysios = (List<Physiotherapist>) bookingSystem.loadData("physiotherapists.dat");
+        @SuppressWarnings("unchecked")
         List<Patient> loadedPatients = (List<Patient>) bookingSystem.loadData("patients.dat");
         @SuppressWarnings("unchecked")
+        List<Treatment> loadedTreatments = (List<Treatment>) bookingSystem.loadData("treatments.dat");
+        @SuppressWarnings("unchecked")
         List<Appointment> loadedAppointments = (List<Appointment>) bookingSystem.loadData("appointments.dat");
+
+
+        if (loadedPhysios != null) {
+            for (Physiotherapist physio : loadedPhysios) {
+                bookingSystem.addPhysiotherapist(physio);
+            }
+        }
 
         if (loadedPatients != null) {
             for (Patient p : loadedPatients) {
                 bookingSystem.addPatient(p);
+            }
+        }
+
+        if (loadedTreatments != null) {
+            for (Treatment t : loadedTreatments) {
+                bookingSystem.addTreatment(t);
             }
         }
 
@@ -26,7 +43,7 @@ public class Main {
             }
         }
 
-        if (loadedPatients == null || loadedAppointments == null) {
+        if (loadedAppointments == null || loadedPhysios == null || loadedPatients == null || loadedTreatments == null ) {
             initializeSampleData(); // only if no saved data
         }
 
@@ -62,6 +79,8 @@ public class Main {
                 case 0 -> {
                     bookingSystem.saveData(bookingSystem.getPatients(), "patients.dat");
                     bookingSystem.saveData(bookingSystem.getAppointments(), "appointments.dat");
+                    bookingSystem.saveData(bookingSystem.getAllPhysiotherapists(), "physiotherapists.dat");
+                    bookingSystem.saveData(bookingSystem.getAllTreatments(), "treatments.dat");
                     System.out.println("Data saved. Exiting... Goodbye!");
                     System.exit(0);
 

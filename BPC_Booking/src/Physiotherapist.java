@@ -1,6 +1,7 @@
 import java.util.*;
 import java.io.Serializable;
 public class Physiotherapist extends Member implements Serializable {
+    private static final long serialVersionUID = 1L;
     // Additional attributes
     private List<String> expertise;
     private Map<Integer, List<Appointment>> schedule;// Weekly schedule (Week number → Appointments)

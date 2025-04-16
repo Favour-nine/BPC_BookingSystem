@@ -63,6 +63,10 @@ public class BookingSystem {
         return patients.removeIf(patient -> patient.getUniqueId().equals(patientID));
     }
 
+    public List<Treatment> getAllTreatments() {
+        return new ArrayList<>(treatments); // Avoids direct modification
+    }
+
     public List<Appointment> getAppointments() {
         return new ArrayList<>(appointments); // Return a copy for safety
     }
@@ -105,10 +109,6 @@ public class BookingSystem {
         treatments.add(treatment);
     }
 
-    // Returns a copy of the treatment list for display or booking
-    public List<Treatment> getAllTreatments() {
-        return new ArrayList<>(treatments); // Avoids direct modification
-    }
 
     // Book an appointment only if no time conflict exists for the physiotherapist at the specified week/date/time
     public Appointment bookAppointment(Patient patient, Physiotherapist physio, int week, String dateStr, String time, Treatment treatment) {
