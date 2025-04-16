@@ -197,6 +197,7 @@ public class Main {
         while (true) {
             System.out.println("\n=== Reports ===");
             System.out.println("[1] Generate appointment report");
+            System.out.println("[2] Generate analytics report");
             System.out.println("[0] Back to main menu");
             System.out.print("Enter your choice: ");
 
@@ -204,6 +205,7 @@ public class Main {
                 int choice = Integer.parseInt(scanner.nextLine().trim());
                 switch (choice) {
                     case 1 -> bookingSystem.generateReport();
+                    case 2 -> bookingSystem.generateAnalyticsReport();
                     case 0 -> { return; }
                     default -> System.out.println("Invalid choice.");
                 }

@@ -228,6 +228,47 @@ public class BookingSystem {
         return (days / 7) + 1;
     }
 
+    public void generateAnalyticsReport() {
+        System.out.println("\n=== Analytics Report ===");
+
+        // 1. Appointments by Treatment
+        Map<String, Integer> treatmentCounts = new HashMap<>();
+        for (Appointment a : appointments) {
+            String name = a.getTreatment().getTreatmentName();
+            treatmentCounts.put(name, treatmentCounts.getOrDefault(name, 0) + 1);
+        }
+
+        System.out.println("\nAppointments by Treatment:");
+        for (Map.Entry<String, Integer> entry : treatmentCounts.entrySet()) {
+            System.out.println("- " + entry.getKey() + ": " + entry.getValue());
+        }
+
+        // 2. Appointments by Physiotherapist
+        Map<String, Integer> physioCounts = new HashMap<>();
+        for (Appointment a : appointments) {
+            String name = a.getPhysiotherapist().getFullName();
+            physioCounts.put(name, physioCounts.getOrDefault(name, 0) + 1);
+        }
+
+        System.out.println("\nAppointments by Physiotherapist:");
+        for (Map.Entry<String, Integer> entry : physioCounts.entrySet()) {
+            System.out.println("- " + entry.getKey() + ": " + entry.getValue());
+        }
+
+        // 3. Appointments per Week
+        Map<Integer, Integer> weekCounts = new HashMap<>();
+        for (Appointment a : appointments) {
+            int week = getWeekFromDate(a.getDate());
+            weekCounts.put(week, weekCounts.getOrDefault(week, 0) + 1);
+        }
+
+        System.out.println("\nAppointments per Week:");
+        for (Map.Entry<Integer, Integer> entry : weekCounts.entrySet()) {
+            System.out.println("- Week " + entry.getKey() + ": " + entry.getValue());
+        }
+    }
+
+
 
 
 
