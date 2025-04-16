@@ -77,7 +77,7 @@ public class BookingSystem {
     }
 
     // Book an appointment only if no time conflict exists for the physiotherapist at the specified week/date/time
-    public boolean bookAppointment(Patient patient, Physiotherapist physio, int week, String dateStr, String time, Treatment treatment) {
+    public Appointment bookAppointment(Patient patient, Physiotherapist physio, int week, String dateStr, String time, Treatment treatment) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date;
         try {
@@ -86,7 +86,7 @@ public class BookingSystem {
         }
         catch (ParseException e) {
             System.out.println("Invalid date format. Use yyyy-MM-dd.");
-            return false;
+            return null;
         }
 
         // Create the new appointment to be booked
@@ -102,9 +102,9 @@ public class BookingSystem {
             physio.addAppointment(week, newAppointment);
             patient.bookAppointment(newAppointment);
             appointments.add(newAppointment);
-            return true;
+            return newAppointment;
         }
-        return false;
+        return null;
 
     }
 

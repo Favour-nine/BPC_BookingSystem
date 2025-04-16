@@ -280,13 +280,16 @@ public class Main {
 
         Treatment selectedTreatment = availableTreatments.get(treatmentIndex - 1);
         String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
-        boolean success = bookingSystem.bookAppointment(patient, physio, week, formattedDate, time, selectedTreatment);
+        Appointment booked = bookingSystem.bookAppointment(patient, physio, week, formattedDate, time, selectedTreatment);
 
-        if (success) {
+        if (booked != null) {
             System.out.println("Appointment booked successfully!");
+            System.out.println("Appointment ID: " + booked.getAppointmentID());
+            System.out.println("Keep this ID safe.");
         } else {
             System.out.println("Failed to book appointment. Slot may be taken.");
         }
+
     }
 
     // Cancel an appointment
@@ -428,10 +431,12 @@ public class Main {
         // Derive week from the chosen appointment
         int week = bookingSystem.getWeekFromDate(date);
         SimpleDateFormat sdfOut = new SimpleDateFormat("yyyy-MM-dd");
-        boolean success = bookingSystem.bookAppointment(patient, physio, week, sdfOut.format(date), time, treatment);
+        Appointment success = bookingSystem.bookAppointment(patient, physio, week, sdfOut.format(date), time, treatment);
 
-        if (success) {
-            System.out.println(" Appointment booked successfully!");
+        if (success != null) {
+            System.out.println("✅ Appointment booked successfully!");
+            System.out.println("Appointment ID: " + chosen.getAppointmentID());
+            System.out.println("Keep this ID safe — you'll need it to cancel.");
         } else {
             System.out.println(" Failed to book appointment. It may already be taken.");
         }
@@ -464,7 +469,8 @@ public class Main {
                         " | Time: " + appointment.getTime() +
                         " | Treatment: " + appointment.getTreatment().getTreatmentName() +
                         " | Physiotherapist: " + appointment.getPhysiotherapist().getFullName() +
-                        " | Status: " + appointment.getStatus());
+                        " | Status: " + appointment.getStatus() +
+                        " | Appointment ID: "+appointment.getAppointmentID() );
             }
         }
     }
