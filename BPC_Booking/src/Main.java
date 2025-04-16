@@ -55,6 +55,7 @@ public class Main {
             System.out.println("[3] Search & Discovery");
             System.out.println("[4] Generate appointment report");
             System.out.println("[5] Export report to file");
+            System.out.println("[6] Admin Panel");
             System.out.println("[0] Exit");
             System.out.print("Enter your choice: ");
 
@@ -76,6 +77,7 @@ public class Main {
                     String filename = scanner.nextLine();
                     bookingSystem.exportReportToFile(filename);
                 }
+                case 6 -> adminMenu();
                 case 0 -> {
                     bookingSystem.saveData(bookingSystem.getPatients(), "patients.dat");
                     bookingSystem.saveData(bookingSystem.getAppointments(), "appointments.dat");
@@ -581,6 +583,96 @@ public class Main {
         System.out.println("You are now checked in for your appointment.");
     }
 
+    private static void adminMenu() {
+        System.out.print("Enter admin PIN: ");
+        String pin = scanner.nextLine().trim();
+        if (!pin.equals("2425")) {
+            System.out.println("Access denied.");
+            return;
+        }
+
+        while (true) {
+            System.out.println("\n=== Admin Panel ===");
+            System.out.println("[1] View all patients");
+            System.out.println("[2] View all physiotherapists");
+            System.out.println("[3] Add new physiotherapist");
+            System.out.println("[4] Remove a physiotherapist");
+            System.out.println("[0] Back to main menu");
+            System.out.print("Enter your choice: ");
+
+            try {
+                int choice = Integer.parseInt(scanner.nextLine().trim());
+                switch (choice) {
+                    case 1 -> viewAllPatients();
+                    case 2 -> viewAllPhysiotherapists();
+                    case 3 -> addNewPhysiotherapist();
+                    case 4 -> removePhysiotherapist();
+                    case 0 -> { return; }
+                    default -> System.out.println("Invalid choice.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input.");
+            }
+        }
+    }
+
+    private static void viewAllPatients() {
+        List<Patient> patients = bookingSystem.getPatients();
+        if (patients.isEmpty()) {
+            System.out.println("No patients found.");
+        } else {
+            for (Patient p : patients) {
+                System.out.println("- " + p.getFullName() + " | ID: " + p.getUniqueId() + " | Phone: " + p.getPhoneNumber());
+            }
+        }
+    }
+
+    private static void viewAllPhysiotherapists() {
+        List<Physiotherapist> physios = bookingSystem.getAllPhysiotherapists();
+        if (physios.isEmpty()) {
+            System.out.println("No physiotherapists found.");
+        } else {
+            for (Physiotherapist p : physios) {
+                System.out.println("- " + p.getFullName() + " | Expertise: " + p.getExpertise());
+            }
+        }
+    }
+
+    private static void addNewPhysiotherapist() {
+        System.out.print("Full Name: ");
+        String name = scanner.nextLine().trim();
+
+        System.out.print("Phone Number: ");
+        String phone = scanner.nextLine().trim();
+
+        System.out.print("Address: ");
+        String address = scanner.nextLine().trim();
+
+        System.out.print("Enter expertise areas (comma-separated): ");
+        String[] expertise = scanner.nextLine().split(",");
+        List<String> expertiseList = new ArrayList<>();
+        for (String exp : expertise) {
+            expertiseList.add(exp.trim());
+        }
+
+        Physiotherapist newPhysio = new Physiotherapist(name, phone, address, expertiseList);
+        bookingSystem.addPhysiotherapist(newPhysio);
+
+        System.out.println("New physiotherapist added successfully!");
+    }
+
+    private static void removePhysiotherapist() {
+        System.out.print("Enter full name of physiotherapist to remove: ");
+        String name = scanner.nextLine().trim();
+        Physiotherapist physio = bookingSystem.getPhysiotherapistByName(name);
+
+        if (physio != null) {
+            bookingSystem.getAllPhysiotherapists().remove(physio); // removes from the internal list
+            System.out.println("Physiotherapist removed.");
+        } else {
+            System.out.println("Physiotherapist not found.");
+        }
+    }
 
 
 }
