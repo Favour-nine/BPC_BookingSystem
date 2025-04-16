@@ -1,6 +1,12 @@
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 public class BookingSystem {
     // Attributes
     private List<Physiotherapist> physiotherapists;
@@ -14,6 +20,27 @@ public class BookingSystem {
         this.patients = new ArrayList<>();
         this.appointments = new ArrayList<>();
     }
+
+    // Save object (e.g., patient list or appointment list) to file
+    public void saveData(Object data, String filename) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename))) {
+            out.writeObject(data);
+            System.out.println(" Data saved to " + filename);
+        } catch (IOException e) {
+            System.out.println(" Failed to save data to " + filename + ": " + e.getMessage());
+        }
+    }
+
+    // Load object from file
+    public Object loadData(String filename) {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename))) {
+            return in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("⚠️ Failed to load data from " + filename + ": " + e.getMessage());
+            return null;
+        }
+    }
+
 
     // Register new patient
     public Patient registerPatient(String fullName, String phoneNumber, String address) {
@@ -31,6 +58,10 @@ public class BookingSystem {
     // Remove a patient
     public boolean removePatient(String patientID) {
         return patients.removeIf(patient -> patient.getUniqueId().equals(patientID));
+    }
+
+    public List<Appointment> getAppointments() {
+        return new ArrayList<>(appointments); // Return a copy for safety
     }
 
     public List<Patient> getPatients() {

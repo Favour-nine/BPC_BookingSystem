@@ -7,7 +7,29 @@ public class Main {
     private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        initializeSampleData(); // Preload data for testing
+// Load existing data or initialize fresh sample data
+        @SuppressWarnings("unchecked")
+        List<Patient> loadedPatients = (List<Patient>) bookingSystem.loadData("patients.dat");
+        @SuppressWarnings("unchecked")
+        List<Appointment> loadedAppointments = (List<Appointment>) bookingSystem.loadData("appointments.dat");
+
+        if (loadedPatients != null) {
+            for (Patient p : loadedPatients) {
+                bookingSystem.addPatient(p);
+            }
+        }
+
+        if (loadedAppointments != null) {
+            for (Appointment a : loadedAppointments) {
+                a.getPhysiotherapist().addAppointment(bookingSystem.getWeekFromDate(a.getDate()), a);
+                a.getPatient().bookAppointment(a);
+            }
+        }
+
+        if (loadedPatients == null || loadedAppointments == null) {
+            initializeSampleData(); // only if no saved data
+        }
+
 
         while (true) {
             System.out.println("\n=== Physiotherapy Booking System ===");
@@ -32,8 +54,11 @@ public class Main {
                 case 3 -> searchMenu();
                 case 4 -> reportMenu();
                 case 0 -> {
-                    System.out.println("Exiting... Goodbye!");
+                    bookingSystem.saveData(bookingSystem.getPatients(), "patients.dat");
+                    bookingSystem.saveData(bookingSystem.getAppointments(), "appointments.dat");
+                    System.out.println("Data saved. Exiting... Goodbye!");
                     System.exit(0);
+
                 }
                 default -> System.out.println("Invalid choice. Try again.");
             }

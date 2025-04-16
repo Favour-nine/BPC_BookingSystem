@@ -1,4 +1,6 @@
-public class Member {
+import java.io.Serializable;
+public class Member implements Serializable {
+    private static final long serialVersionUID = 1L;
     // Private attributes (Encapsulation)
     private String fullName;
     private String phoneNumber;

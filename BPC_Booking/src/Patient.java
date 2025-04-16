@@ -1,5 +1,7 @@
 import java.util.*;
-public class Patient extends Member {
+import java.io.Serializable;
+public class Patient extends Member implements Serializable {
+    private static final long serialVersionUID = 1L;
     // List of appointments
     private List<Appointment> appointmentList;
 

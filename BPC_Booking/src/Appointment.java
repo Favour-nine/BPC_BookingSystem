@@ -1,6 +1,7 @@
 import java.util.Date;
+import java.io.Serializable;
 
-public class Appointment {
+public class Appointment implements Serializable {
     // Attributes
     private String appointmentID;
     private Date date;
