@@ -153,6 +153,7 @@ public class Main {
             System.out.println("[1] Book an appointment");
             System.out.println("[2] Cancel an appointment");
             System.out.println("[3] Check in to an appointment");
+            System.out.println("[4] Reschedule an appointment");
             System.out.println("[0] Back to main menu");
             System.out.print("Enter your choice: ");
 
@@ -162,6 +163,7 @@ public class Main {
                     case 1 -> bookAppointment();
                     case 2 -> cancelAppointment();
                     case 3 -> checkInAppointment();
+                    case 4 -> rescheduleAppointment();
                     case 0 -> { return; }
                     default -> System.out.println("Invalid choice.");
                 }
@@ -582,6 +584,86 @@ public class Main {
 
         System.out.println("You are now checked in for your appointment.");
     }
+
+    private static void rescheduleAppointment() {
+        System.out.print("Enter your Patient ID: ");
+        String patientID = scanner.nextLine().trim();
+
+        Patient patient = bookingSystem.getPatients().stream()
+                .filter(p -> p.getUniqueId().equalsIgnoreCase(patientID))
+                .findFirst()
+                .orElse(null);
+
+        if (patient == null) {
+            System.out.println("Patient not found.");
+            return;
+        }
+
+        List<Appointment> appointments = patient.getAppointments().stream()
+                .filter(app -> !"Attended".equalsIgnoreCase(app.getStatus()) &&
+                        !"Cancelled".equalsIgnoreCase(app.getStatus()))
+                .toList();
+
+        if (appointments.isEmpty()) {
+            System.out.println("You have no appointments to reschedule.");
+            return;
+        }
+
+        System.out.println("Appointments available to reschedule:");
+        for (int i = 0; i < appointments.size(); i++) {
+            Appointment app = appointments.get(i);
+            System.out.println((i + 1) + ". " + app.getDate() + " | " + app.getTime()
+                    + " | " + app.getTreatment().getTreatmentName()
+                    + " | Physio: " + app.getPhysiotherapist().getFullName()
+                    + " | ID: " + app.getAppointmentID());
+        }
+
+        System.out.print("Select appointment to reschedule: ");
+        int index;
+        try {
+            index = Integer.parseInt(scanner.nextLine().trim()) - 1;
+            if (index < 0 || index >= appointments.size()) {
+                System.out.println("Invalid selection.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input.");
+            return;
+        }
+
+        Appointment oldAppointment = appointments.get(index);
+        Physiotherapist physio = oldAppointment.getPhysiotherapist();
+        Treatment treatment = oldAppointment.getTreatment();
+
+        // Collect new date/time
+        System.out.print("Enter new date (yyyy-MM-dd): ");
+        String newDateStr = scanner.nextLine().trim();
+        System.out.print("Enter new time (e.g., 10:00): ");
+        String newTime = scanner.nextLine().trim();
+
+        Date newDate;
+        try {
+            newDate = new SimpleDateFormat("yyyy-MM-dd").parse(newDateStr);
+        } catch (ParseException e) {
+            System.out.println("Invalid date format.");
+            return;
+        }
+
+        int newWeek = bookingSystem.getWeekFromDate(newDate);
+        String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(newDate);
+
+        Appointment newAppointment = bookingSystem.bookAppointment(patient, physio, newWeek, formattedDate, newTime, treatment);
+
+        if (newAppointment != null) {
+            // Cancel old appointment
+            oldAppointment.setStatus("Cancelled");
+            System.out.println("Appointment rescheduled successfully!");
+            System.out.println("New Appointment ID: " + newAppointment.getAppointmentID());
+        } else {
+            System.out.println("Failed to reschedule. New slot might be taken.");
+        }
+    }
+
 
     private static void adminMenu() {
         System.out.print("Enter admin PIN: ");
