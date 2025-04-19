@@ -48,4 +48,10 @@ public class Treatment implements Serializable {
     public String getTreatmentDetails() {
         return "Treatment: " + treatmentName + "\nDescription: " + description + "\nAvailable: " + isAvailable;
     }
+
+
+    @Override
+    public String toString() {
+        return treatmentName + " - " + description;
+    }
 }
