@@ -49,7 +49,23 @@ public class Main {
 
 
         while (true) {
-            System.out.println("\n=== Physiotherapy Booking System ===");
+            System.out.println("""
+                    
+                    
+                    
+                    █████████     █████████     █████████
+                    ██      ██    ██      ██   ██       \s
+                    ██      ██    ██      ██  ██        \s
+                    █████████     █████████  ██         \s
+                    ██      ██    ██          ██        \s
+                    ██      ██    ██           ██       \s
+                    █████████     ██            █████████
+                    
+                    ========================================
+                      WELCOME TO BPC PHYSIOTHERAPY SYSTEM
+                    ========================================
+                    
+                    """);
             System.out.println("[1] Patient Self-Service");
             System.out.println("[2] Booking Management");
             System.out.println("[3] Search & Discovery");
@@ -126,11 +142,14 @@ public class Main {
     //Patient Self service option
     private static void patientSelfServiceMenu() {
         while (true) {
-            System.out.println("\n=== Patient Self-Service ===");
+            System.out.println("════════════════════════════════");
+            System.out.println("""
+                    === Patient Self-Service ===
+                    """);
             System.out.println("[1] Register as a new patient");
             System.out.println("[2] View my appointments");
             System.out.println("[0] Back to main menu");
-            System.out.print("Enter your choice: ");
+            System.out.print("\nEnter your choice: ");
 
             try {
                 int choice = Integer.parseInt(scanner.nextLine().trim());
@@ -149,13 +168,14 @@ public class Main {
     //Booking management option
     private static void bookingManagementMenu() {
         while (true) {
+            System.out.println("════════════════════════════════");
             System.out.println("\n=== Booking Management ===");
-            System.out.println("[1] Book an appointment");
+            System.out.println("\n[1] Book an appointment");
             System.out.println("[2] Cancel an appointment");
             System.out.println("[3] Check in to an appointment");
             System.out.println("[4] Reschedule an appointment");
             System.out.println("[0] Back to main menu");
-            System.out.print("Enter your choice: ");
+            System.out.print("\nEnter your choice: ");
 
             try {
                 int choice = Integer.parseInt(scanner.nextLine().trim());
@@ -175,12 +195,13 @@ public class Main {
 
     private static void searchMenu() {
         while (true) {
+            System.out.println("\n════════════════════════════════");
             System.out.println("\n=== Search & Discovery ===");
-            System.out.println("[1] Find physiotherapists by expertise");
+            System.out.println("\n[1] Find physiotherapists by expertise");
             System.out.println("[2] View physiotherapist availability");
             System.out.println("[3] Search appointments by treatment");
             System.out.println("[0] Back to main menu");
-            System.out.print("Enter your choice: ");
+            System.out.print("\nEnter your choice: ");
 
             try {
                 int choice = Integer.parseInt(scanner.nextLine().trim());
@@ -199,11 +220,12 @@ public class Main {
 
     private static void reportMenu() {
         while (true) {
+            System.out.println("\n════════════════════════════════");
             System.out.println("\n=== Reports ===");
             System.out.println("[1] Generate appointment report");
             System.out.println("[2] Generate analytics report");
             System.out.println("[0] Back to main menu");
-            System.out.print("Enter your choice: ");
+            System.out.print("\nEnter your choice: ");
 
             try {
                 int choice = Integer.parseInt(scanner.nextLine().trim());
@@ -228,6 +250,7 @@ public class Main {
         String fullName;
         // Validate full name (letters only and at least two words)
         while (true) {
+            System.out.println("\n════════════════════════════════");
             System.out.print("Enter full name: ");
             fullName = scanner.nextLine().trim();
             // Regex check: only letters and spaces, and at least two words
@@ -274,6 +297,7 @@ public class Main {
 
     // Book an appointment
     private static void bookAppointment() {
+        System.out.println("\n════════════════════════════════");
         System.out.print("Enter Patient ID: ");
         String patientID = scanner.nextLine();
         Patient patient = bookingSystem.getPatients().stream()
@@ -339,6 +363,7 @@ public class Main {
         Appointment booked = bookingSystem.bookAppointment(patient, physio, week, formattedDate, time, selectedTreatment);
 
         if (booked != null) {
+            System.out.println("\n════════════════════════════════");
             System.out.println("Appointment booked successfully!");
             System.out.println("Appointment ID: " + booked.getAppointmentID());
             System.out.println("Keep this ID safe.");
@@ -350,21 +375,23 @@ public class Main {
 
     // Cancel an appointment
     private static void cancelAppointment() {
+        System.out.println("\n════════════════════════════════");
         System.out.print("Enter Appointment ID to cancel: ");
         String appointmentID = scanner.nextLine();
 
         boolean success = bookingSystem.cancelAppointment(appointmentID);
 
         if (success) {
-            System.out.println("Appointment cancelled successfully!");
+            System.out.println("\nAppointment cancelled successfully!");
         } else {
-            System.out.println("Appointment not found!");
+            System.out.println("\nAppointment not found!");
         }
     }
 
     //  Search physiotherapists by expertise
     private static void searchPhysiotherapists() {
-        System.out.print("Enter area of expertise: ");
+        System.out.println("\n════════════════════════════════");
+        System.out.print("\nEnter area of expertise: ");
         String expertise = scanner.nextLine();
 
         List<Physiotherapist> results = bookingSystem.getPhysiotherapistsByExpertise(expertise);
@@ -381,7 +408,8 @@ public class Main {
 
     // Display all appointments for a physiotherapist (by week)
     private static void viewAppointmentsForPhysiotherapist() {
-        System.out.print("Enter physiotherapist's full name: ");
+        System.out.println("\n════════════════════════════════");
+        System.out.print("\nEnter physiotherapist's full name: ");
         String physioName = scanner.nextLine();
         Physiotherapist physio = bookingSystem.getPhysiotherapistByName(physioName);
 
@@ -418,7 +446,8 @@ public class Main {
 
     // Search and display available appointments by treatment name
     private static void searchAppointmentsByTreatment() {
-        System.out.print("Enter treatment name: ");
+        System.out.println("\n════════════════════════════════");
+        System.out.print("\nEnter treatment name: ");
         String treatmentName = scanner.nextLine().trim().toLowerCase();
 
         List<Appointment> matchedAppointments = new ArrayList<>();
@@ -472,7 +501,7 @@ public class Main {
         String time = chosen.getTime();
 
         // Ask for patient ID
-        System.out.print("Enter your Patient ID: ");
+        System.out.print("\nEnter your Patient ID: ");
         String patientID = scanner.nextLine().trim();
         Patient patient = bookingSystem.getPatients().stream()
                 .filter(p -> p.getUniqueId().equalsIgnoreCase(patientID))
@@ -501,7 +530,7 @@ public class Main {
 
     // View all appointments for a given patient by ID
     private static void viewAppointmentsForPatient() {
-        System.out.print("Enter your Patient ID: ");
+        System.out.print("\nEnter your Patient ID: ");
         String patientID = scanner.nextLine().trim();
 
         Patient patient = bookingSystem.getPatients().stream()
@@ -519,7 +548,7 @@ public class Main {
         if (appointments.isEmpty()) {
             System.out.println("You have no appointments booked.");
         } else {
-            System.out.println("Your Appointments:");
+            System.out.println("\nYour Appointments:");
             for (Appointment appointment : appointments) {
                 System.out.println("- Date: " + appointment.getDate() +
                         " | Time: " + appointment.getTime() +
@@ -532,7 +561,7 @@ public class Main {
     }
     // Allow a patient to check in to an upcoming appointment
     private static void checkInAppointment() {
-        System.out.print("Enter your Patient ID: ");
+        System.out.print("\nEnter your Patient ID: ");
         String patientID = scanner.nextLine().trim();
 
         Patient patient = bookingSystem.getPatients().stream()
@@ -585,8 +614,8 @@ public class Main {
         System.out.println("You are now checked in for your appointment.");
     }
 
-    private static void rescheduleAppointment() {
-        System.out.print("Enter your Patient ID: ");
+    private static void  rescheduleAppointment () {
+        System.out.print("\nEnter your Patient ID: ");
         String patientID = scanner.nextLine().trim();
 
         Patient patient = bookingSystem.getPatients().stream()
@@ -618,7 +647,7 @@ public class Main {
                     + " | ID: " + app.getAppointmentID());
         }
 
-        System.out.print("Select appointment to reschedule: ");
+        System.out.print("\nSelect appointment to reschedule: ");
         int index;
         try {
             index = Integer.parseInt(scanner.nextLine().trim()) - 1;
@@ -666,21 +695,22 @@ public class Main {
 
 
     private static void adminMenu() {
-        System.out.print("Enter admin PIN: ");
+        System.out.print("\nEnter admin PIN: ");
         String pin = scanner.nextLine().trim();
-        if (!pin.equals("2425")) {
+        if (!pin.equals("0000")) {
             System.out.println("Access denied.");
             return;
         }
 
         while (true) {
+            System.out.println("════════════════════════════════");
             System.out.println("\n=== Admin Panel ===");
-            System.out.println("[1] View all patients");
+            System.out.println("\n[1] View all patients");
             System.out.println("[2] View all physiotherapists");
             System.out.println("[3] Add new physiotherapist");
             System.out.println("[4] Remove a physiotherapist");
             System.out.println("[0] Back to main menu");
-            System.out.print("Enter your choice: ");
+            System.out.print("\nEnter your choice: ");
 
             try {
                 int choice = Integer.parseInt(scanner.nextLine().trim());
@@ -721,6 +751,7 @@ public class Main {
     }
 
     private static void addNewPhysiotherapist() {
+        System.out.println("\n════════════════════════════════");
         System.out.print("Full Name: ");
         String name = scanner.nextLine().trim();
 
@@ -744,7 +775,7 @@ public class Main {
     }
 
     private static void removePhysiotherapist() {
-        System.out.print("Enter full name of physiotherapist to remove: ");
+        System.out.print("\n1Enter full name of physiotherapist to remove: ");
         String name = scanner.nextLine().trim();
         Physiotherapist physio = bookingSystem.getPhysiotherapistByName(name);
 
