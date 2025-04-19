@@ -122,6 +122,15 @@ public class BookingSystem {
             System.out.println("Invalid date format. Use yyyy-MM-dd.");
             return null;
         }
+        // 🔍 Check if the physiotherapist has expertise in the selected treatment
+        boolean hasExpertise = physio.getExpertise().stream()
+                .anyMatch(exp -> exp.equalsIgnoreCase(treatment.getTreatmentName()));
+        if (!hasExpertise) {
+            System.out.println("\nCannot book appointment: Physiotherapist " + physio.getFullName() +
+                    " does not have expertise in \"" + treatment.getTreatmentName() + "\".\n");
+            return null;
+        }
+
 
         // Create the new appointment to be booked
         Appointment newAppointment = new Appointment(UUID.randomUUID().toString(), date, time, treatment, physio, patient);

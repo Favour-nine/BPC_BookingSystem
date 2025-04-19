@@ -339,15 +339,25 @@ public class Main {
         System.out.print("Enter Time (e.g., 10:00 AM): ");
         String time = scanner.nextLine();
 
-        // Get available treatments from the system
-        List<Treatment> availableTreatments = bookingSystem.getAllTreatments();
-        System.out.println("Available Treatments:");
+// Filter treatments to only those offered by the selected physiotherapist
+        List<Treatment> availableTreatments = bookingSystem.getAllTreatments().stream()
+                .filter(t -> physio.getExpertise().stream()
+                        .anyMatch(e -> e.equalsIgnoreCase(t.getTreatmentName())))
+                .toList();
+
+        if (availableTreatments.isEmpty()) {
+            System.out.println("\n⚠️ This physiotherapist has no treatments assigned or matching their expertise.");
+            return;
+        }
+
+        System.out.println("\nTreatments offered by " + physio.getFullName() + ":");
         for (int i = 0; i < availableTreatments.size(); i++) {
             System.out.println((i + 1) + ". " + availableTreatments.get(i).getTreatmentName());
         }
+
         int treatmentIndex;
         try {
-            System.out.print("Select treatment number: ");
+            System.out.print("\nSelect treatment number: ");
             treatmentIndex = Integer.parseInt(scanner.nextLine().trim());
             if (treatmentIndex < 1 || treatmentIndex > availableTreatments.size()) {
                 System.out.println("Invalid treatment selection.");
@@ -360,6 +370,8 @@ public class Main {
 
         Treatment selectedTreatment = availableTreatments.get(treatmentIndex - 1);
         String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+
+// Proceed to book the appointment
         Appointment booked = bookingSystem.bookAppointment(patient, physio, week, formattedDate, time, selectedTreatment);
 
         if (booked != null) {
