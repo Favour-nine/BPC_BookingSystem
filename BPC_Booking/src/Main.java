@@ -43,9 +43,33 @@ public class Main {
             }
         }
 
-        if (loadedAppointments == null || loadedPhysios == null || loadedPatients == null || loadedTreatments == null ) {
-            initializeSampleData(); // only if no saved data
+        boolean anyDataMissing = loadedAppointments == null || loadedPhysios == null || loadedPatients == null || loadedTreatments == null;
+
+        if (anyDataMissing) {
+            initializeSampleData();
+        } else {
+            boolean timetableRegenerated = false;
+
+            for (Physiotherapist physio : bookingSystem.getAllPhysiotherapists()) {
+                boolean hasSlots = false;
+                for (int week = 1; week <= 4; week++) {
+                    if (!physio.getAvailableAppointments(week).isEmpty()) {
+                        hasSlots = true;
+                        break;
+                    }
+                }
+                if (!hasSlots) {
+                    physio.generateWeeklySchedule();
+                    timetableRegenerated = true;
+                }
+            }
+
+            if (timetableRegenerated) {
+                bookingSystem.generateTreatmentTimetable(bookingSystem.getAllTreatments());
+            }
         }
+
+
 
 
         while (true) {
@@ -111,12 +135,18 @@ public class Main {
 
     //  Preload some sample physiotherapists, patients, and treatments
     private static void initializeSampleData() {
-        // Sample Physiotherapists
-        //Physiotherapist physio1 = new Physiotherapist("Dr. James Smith", "123-456-7890", "123 Main St", Arrays.asList("Rehabilitation", "Osteopathy"));
-        //Physiotherapist physio2 = new Physiotherapist("Dr. Sarah Johnson", "987-654-3210", "456 Elm St", Arrays.asList("Physiotherapy", "Massage"));
+        // Testing Physiotherapists
+        Physiotherapist physio1 = new Physiotherapist("Dr. James Smith", "123-456-7890", "123 Main St", Arrays.asList("Rehabilitation", "Osteopathy"));
+        Physiotherapist physio2 = new Physiotherapist("Dr. Sarah Johnson", "987-654-3210", "456 Elm St", Arrays.asList("Physiotherapy", "Massage"));
+        Physiotherapist physio3 = new Physiotherapist("Dr. Emily Clarke", "555-111-2222", "789 Birch St", Arrays.asList("Acupuncture", "Neural Mobilisation"));
+        Physiotherapist physio4 = new Physiotherapist("Dr. Michael Lee", "555-333-4444", "321 Pine St", Arrays.asList("Spine Mobilisation", "Massage"));
+        Physiotherapist physio5 = new Physiotherapist("Dr. Priya Patel", "555-777-8888", "654 Willow St", Arrays.asList("Pool Therapy", "Rehabilitation"));
 
-        //bookingSystem.addPhysiotherapist(physio1);
-        //bookingSystem.addPhysiotherapist(physio2);
+        bookingSystem.addPhysiotherapist(physio1);
+        bookingSystem.addPhysiotherapist(physio2);
+        bookingSystem.addPhysiotherapist(physio3);
+        bookingSystem.addPhysiotherapist(physio4);
+        bookingSystem.addPhysiotherapist(physio5);
 
         // Sample Patients
         //Patient patient1 = new Patient("Alice Brown", "111-222-3333", "789 Maple St");
@@ -125,13 +155,13 @@ public class Main {
         //bookingSystem.addPatient(patient1);
         //bookingSystem.addPatient(patient2);
 
-        // Sample Treatments
-        bookingSystem.addTreatment(new Treatment("Massage", "Relieves muscle tension"));
-        bookingSystem.addTreatment(new Treatment("Rehabilitation", "Post-injury recovery"));
-        bookingSystem.addTreatment(new Treatment("Acupuncture", "Stimulates nerves and reduces pain"));
-        bookingSystem.addTreatment(new Treatment("Spine Mobilisation", "Mobilises spine and joints"));
-        bookingSystem.addTreatment(new Treatment("Pool Therapy", "Water-based physical therapy"));
-        bookingSystem.addTreatment(new Treatment("Neural Mobilisation", "Enhances nerve movement"));
+        // Testing Treatments
+        bookingSystem.addTreatment(new Treatment("Massage", "Relieves muscle tension", "Massage"));
+        bookingSystem.addTreatment(new Treatment("Rehabilitation", "Post-injury recovery", "Rehabilitation"));
+        bookingSystem.addTreatment(new Treatment("Acupuncture", "Stimulates nerves and reduces pain", "Acupuncture"));
+        bookingSystem.addTreatment(new Treatment("Spine Mobilisation", "Mobilises spine and joints", "Spine Mobilisation"));
+        bookingSystem.addTreatment(new Treatment("Pool Therapy", "Water-based physical therapy", "Pool Therapy"));
+        bookingSystem.addTreatment(new Treatment("Neural Mobilisation", "Enhances nerve movement", "Neural Mobilisation"));
 
         // Generate a timetable for all physiotherapists using these treatments
         bookingSystem.generateTreatmentTimetable(bookingSystem.getAllTreatments());
@@ -480,40 +510,61 @@ public class Main {
 
     // Display all appointments for a physiotherapist (by week)
     private static void viewAppointmentsForPhysiotherapist() {
-        System.out.println("\n════════════════════════════════");
-        System.out.print("\nEnter physiotherapist's full name: ");
-        String physioName = scanner.nextLine();
-        Physiotherapist physio = bookingSystem.getPhysiotherapistByName(physioName);
+        System.out.println("\n══════════════════════════════════════════");
+        System.out.println("All Physiotherapists and Their Availability");
+        System.out.println("══════════════════════════════════════════");
 
-        if (physio == null) {
-            System.out.println("Physiotherapist not found.");
+        List<Physiotherapist> physios = bookingSystem.getAllPhysiotherapists();
+
+        if (physios.isEmpty()) {
+            System.out.println("No physiotherapists available.");
             return;
         }
 
-        System.out.println("\nAvailable appointments for " + physio.getFullName() + ":");
-        boolean found = false;
+        int physioCount = 1;
+        for (Physiotherapist physio : physios) {
+            List<String> availableSlots = new ArrayList<>();
 
-        for (int week = 1; week <= 4; week++) {
-            List<Appointment> appointments = physio.getAvailableAppointments(week);
-            List<Appointment> available = appointments.stream()
-                    .filter(appointment -> appointment.getPatient() == null)
-                    .toList();
-
-            if (!available.isEmpty()) {
-                found = true;
-                System.out.println("\nWeek " + week + ":");
-                for (Appointment appointment : available) {
-                    System.out.println("- " + appointment.getDate() + " | " + appointment.getTime() + " | " +
-                            appointment.getTreatment().getTreatmentName() + " | Status: Available");
+            for (int week = 1; week <= 4; week++) {
+                // Fetch all appointments regardless of status
+                List<Appointment> allAppointments = physio.getAvailableAppointments(week);
+                for (Appointment appointment : allAppointments) {
+                    if (appointment.getPatient() == null) {
+                        String date = new SimpleDateFormat("yyyy-MM-dd").format(appointment.getDate());
+                        String time = appointment.getTime();
+                        String treatment = appointment.getTreatment().getTreatmentName();
+                        availableSlots.add("     - " + date + " | " + time + " | " + treatment);
+                    }
                 }
             }
+
+            System.out.println(physioCount + ". " + physio.getFullName());
+            System.out.println("   Expertise: " + physio.getExpertise());
+
+            if (!availableSlots.isEmpty()) {
+                System.out.println("   Available Appointments:");
+                for (String slot : availableSlots) {
+                    System.out.println(slot);
+                }
+            } else {
+                System.out.println("   No available appointments.");
+            }
+
+            System.out.println();
+            physioCount++;
         }
 
-        if (!found) {
-            System.out.println("No available appointments found.");
-        }
+        System.out.println("══════════════════════════════════════════");
+        System.out.print("Would you like to book an appointment with one of them? (yes/no): ");
+        String response = scanner.nextLine().trim().toLowerCase();
 
+        if (response.equals("yes") || response.equals("y")) {
+            bookAppointment();
+        } else {
+            System.out.println("Returning to main menu...");
+        }
     }
+
 
 
     // Search and display available appointments by treatment name

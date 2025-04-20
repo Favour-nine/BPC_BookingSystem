@@ -11,11 +11,11 @@ public class Treatment implements Serializable {
     private String requiredExpertise;
 
     // Constructor
-    public Treatment(String treatmentName, String description) {
+    public Treatment(String treatmentName, String description, String requiredExpertise) {
         this.treatmentName = treatmentName;
         this.description = description;
         this.requiredExpertise = requiredExpertise;
-        this.isAvailable = true; // Default to available
+        this.isAvailable = true;
         this.bookedAppointments = new ArrayList<>();
     }
 
