@@ -449,19 +449,32 @@ public class Main {
 
     //  Search physiotherapists by expertise
     private static void searchPhysiotherapists() {
-        System.out.println("\n════════════════════════════════");
-        System.out.print("\nEnter area of expertise: ");
-        String expertise = scanner.nextLine();
+        System.out.println("\n══════════════════════════════════════════");
+        System.out.println("All Available Physiotherapists & Expertise");
+        System.out.println("══════════════════════════════════════════");
 
-        List<Physiotherapist> results = bookingSystem.getPhysiotherapistsByExpertise(expertise);
+        List<Physiotherapist> physios = bookingSystem.getAllPhysiotherapists();
 
-        if (results.isEmpty()) {
-            System.out.println("No physiotherapists found for that expertise.");
+        if (physios.isEmpty()) {
+            System.out.println("No physiotherapists found.");
+            return;
+        }
+
+        for (int i = 0; i < physios.size(); i++) {
+            Physiotherapist physio = physios.get(i);
+            System.out.println((i + 1) + ". " + physio.getFullName());
+            System.out.println("   Expertise: " + physio.getExpertise());
+            System.out.println();
+        }
+
+        System.out.println("══════════════════════════════════════════");
+        System.out.print("Would you like to book an appointment with one of them? (yes/no): ");
+        String response = scanner.nextLine().trim().toLowerCase();
+
+        if (response.equals("yes") || response.equals("y")) {
+            bookAppointment();
         } else {
-            System.out.println("Available Physiotherapists:");
-            for (Physiotherapist physio : results) {
-                System.out.println("- " + physio.getFullName());
-            }
+            System.out.println("Returning to main menu...");
         }
     }
 
