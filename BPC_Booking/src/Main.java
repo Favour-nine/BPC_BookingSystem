@@ -200,6 +200,8 @@ public class Main {
             System.out.println("\n[1] Find physiotherapists by expertise");
             System.out.println("[2] View physiotherapist availability");
             System.out.println("[3] Search appointments by treatment");
+            System.out.println("[4] View all treatments offered by the clinic");
+            System.out.println("[5] View all physiotherapists and their expertise");
             System.out.println("[0] Back to main menu");
             System.out.print("\nEnter your choice: ");
 
@@ -209,6 +211,8 @@ public class Main {
                     case 1 -> searchPhysiotherapists();
                     case 2 -> viewAppointmentsForPhysiotherapist();
                     case 3 -> searchAppointmentsByTreatment();
+                    case 4 -> viewAllTreatments();
+                    case 5 -> viewAllPhysiosWithExpertise();
                     case 0 -> { return; }
                     default -> System.out.println("Invalid choice.");
                 }
@@ -538,6 +542,37 @@ public class Main {
             System.out.println(" Failed to book appointment. It may already be taken.");
         }
     }
+
+    private static void viewAllTreatments() {
+        System.out.println("\n════════════════════════════════");
+        System.out.println("Treatments Offered by the Clinic:\n");
+
+        List<Treatment> treatments = bookingSystem.getAllTreatments();
+        if (treatments.isEmpty()) {
+            System.out.println("No treatments available.");
+            return;
+        }
+
+        for (Treatment t : treatments) {
+            System.out.println("- " + t.getTreatmentName() + " : " + t.getDescription());
+        }
+    }
+
+    private static void viewAllPhysiosWithExpertise() {
+        System.out.println("\n════════════════════════════════");
+        System.out.println("Physiotherapists and Their Expertise:\n");
+
+        List<Physiotherapist> physios = bookingSystem.getAllPhysiotherapists();
+        if (physios.isEmpty()) {
+            System.out.println("No physiotherapists available.");
+            return;
+        }
+
+        for (Physiotherapist p : physios) {
+            System.out.println("- " + p.getFullName() + " | Expertise: " + String.join(", ", p.getExpertise()));
+        }
+    }
+
 
 
     // View all appointments for a given patient by ID
