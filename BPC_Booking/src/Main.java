@@ -384,7 +384,7 @@ public class Main {
             System.out.println("Appointment ID: " + booked.getAppointmentID());
             System.out.println("Keep this ID safe.");
         } else {
-            System.out.println("Failed to book appointment. Slot may be taken.");
+            System.out.println("Failed to book appointment.");
         }
 
     }

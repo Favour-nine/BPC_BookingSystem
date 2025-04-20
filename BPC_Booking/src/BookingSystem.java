@@ -109,7 +109,6 @@ public class BookingSystem {
         treatments.add(treatment);
     }
 
-
     // Book an appointment only if no time conflict exists for the physiotherapist at the specified week/date/time
     public Appointment bookAppointment(Patient patient, Physiotherapist physio, int week, String dateStr, String time, Treatment treatment) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -122,7 +121,17 @@ public class BookingSystem {
             System.out.println("Invalid date format. Use yyyy-MM-dd.");
             return null;
         }
-        // 🔍 Check if the physiotherapist has expertise in the selected treatment
+
+        // Reject weekends
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
+            System.out.println("\nCannot book appointment on a weekend. Physiotherapists work only Monday to Friday.");
+            return null;
+        }
+
+        // Check if the physiotherapist has expertise in the selected treatment
         boolean hasExpertise = physio.getExpertise().stream()
                 .anyMatch(exp -> exp.equalsIgnoreCase(treatment.getTreatmentName()));
         if (!hasExpertise) {
@@ -131,10 +140,33 @@ public class BookingSystem {
             return null;
         }
 
+        // Check for time conflicts (1-hour break = 2-hour buffer)
+        List<Appointment> existingAppointments = physio.getAvailableAppointments(week);
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
+        try {
+            Date requestedTime = timeFormat.parse(time);
+
+            for (Appointment existing : existingAppointments) {
+                if (existing.getDate().equals(date)) {
+                    Date existingTime = timeFormat.parse(existing.getTime());
+                    long diff = Math.abs(requestedTime.getTime() - existingTime.getTime());
+                    long diffInMinutes = diff / (1000 * 60);
+                    if (diffInMinutes < 120) { // Less than 2 hours apart
+                        System.out.println("\nCannot book: Physiotherapist requires at least 1 hour break between appointments.");
+                        return null;
+                    }
+                }
+            }
+        } catch (ParseException e) {
+            System.out.println("Invalid time format. Use HH:mm.");
+            return null;
+        }
+
 
         // Create the new appointment to be booked
         Appointment newAppointment = new Appointment(UUID.randomUUID().toString(), date, time, treatment, physio, patient);
-        List<Appointment> existingAppointments = physio.getAvailableAppointments(week);
+
 
         // Ensure there is no existing appointment with the same time and date
         boolean timeConflict = existingAppointments.stream()
@@ -203,26 +235,51 @@ public class BookingSystem {
     public void generateTreatmentTimetable(List<Treatment> treatments) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Calendar calendar = Calendar.getInstance();
-        calendar.set(2025, Calendar.MAY, 5); // week 1 starts May 5, 2025
+        calendar.set(2025, Calendar.MAY, 5); // Start from May 5, 2025 (Monday)
 
         for (Physiotherapist physio : physiotherapists) {
             physio.generateWeeklySchedule();
-            for (int week = 1; week <= 4; week++) {// weeks in a month
-                for (int day = 0; day < 5; day++) {// monday to friday
-                    for (int hour = 9; hour < 16; hour++){ // 7 sessions per day from 9 am to 3 pm
+
+            Calendar weekStart = (Calendar) calendar.clone();
+
+            for (int week = 1; week <= 4; week++) {
+                Calendar dayPointer = (Calendar) weekStart.clone();
+
+                for (int day = 0; day < 5; day++) { // Monday to Friday
+                    for (int hour = 9; hour <= 15; hour += 2) { // 1-hour break between = every 2 hours
+                        Date date = (Date) dayPointer.getTime();
                         String time = hour + ":00";
-                        Treatment treatment = treatments.get(new Random().nextInt(treatments.size()));
-                        Date date = calendar.getTime();
-                        Appointment slot = new Appointment(UUID.randomUUID().toString(), date, time, treatment, physio, null);
+
+                        // Only assign treatments matching physio's expertise
+                        List<Treatment> validTreatments = treatments.stream()
+                                .filter(t -> physio.getExpertise().contains(t.getRequiredExpertise()))
+                                .toList();
+
+                        if (validTreatments.isEmpty()) continue;
+
+                        Treatment treatment = validTreatments.get(new Random().nextInt(validTreatments.size()));
+
+                        Appointment slot = new Appointment(
+                                UUID.randomUUID().toString(),
+                                date,
+                                time,
+                                treatment,
+                                physio,
+                                null // no patient yet
+                        );
                         physio.addAppointment(week, slot);
                     }
-                    calendar.add(Calendar.DATE, 1);
+
+                    dayPointer.add(Calendar.DATE, 1); // next weekday
                 }
-                calendar.add(Calendar.DATE, 2); // skip saturday and sunday
+
+                weekStart.add(Calendar.DATE, 7); // move to the next week
             }
         }
-        System.out.println("Weekday schedule (7 sessions/day, Mon–Fri) generated for all physiotherapists.");
+
+        System.out.println("Weekday schedule generated (Mon–Fri, with 1-hour breaks) for all physiotherapists.");
     }
+
 
     public int getWeekFromDate(Date date) {
         Calendar base = Calendar.getInstance();

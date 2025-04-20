@@ -8,11 +8,13 @@ public class Treatment implements Serializable {
     private String description;
     private boolean isAvailable;
     private List<Appointment> bookedAppointments;
+    private String requiredExpertise;
 
     // Constructor
     public Treatment(String treatmentName, String description) {
         this.treatmentName = treatmentName;
         this.description = description;
+        this.requiredExpertise = requiredExpertise;
         this.isAvailable = true; // Default to available
         this.bookedAppointments = new ArrayList<>();
     }
@@ -32,6 +34,10 @@ public class Treatment implements Serializable {
 
     public List<Appointment> getBookedAppointments() {
         return bookedAppointments;
+    }
+
+    public String getRequiredExpertise() {
+        return requiredExpertise;
     }
 
     // Book a treatment (Adds an appointment)
