@@ -73,13 +73,13 @@ public class Main {
             System.out.println("[5] Export report to file");
             System.out.println("[6] Admin Panel");
             System.out.println("[0] Exit");
-            System.out.print("Enter your choice: ");
+            System.out.print("\nEnter your choice: ");
 
             int choice;
             try {
                 choice = Integer.parseInt(scanner.nextLine().trim());
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number.");
+                System.out.println("\nInvalid input. Please enter a number.");
                 continue;
             }
 
@@ -89,7 +89,7 @@ public class Main {
                 case 3 -> searchMenu();
                 case 4 -> reportMenu();
                 case 5 -> {
-                    System.out.print("Enter filename to save report (e.g., report.txt): ");
+                    System.out.print("\nEnter filename to save report (e.g., report.txt): ");
                     String filename = scanner.nextLine();
                     bookingSystem.exportReportToFile(filename);
                 }
@@ -119,11 +119,11 @@ public class Main {
         bookingSystem.addPhysiotherapist(physio2);
 
         // Sample Patients
-        Patient patient1 = new Patient("Alice Brown", "111-222-3333", "789 Maple St");
-        Patient patient2 = new Patient("Bob White", "444-555-6666", "321 Oak St");
+        //Patient patient1 = new Patient("Alice Brown", "111-222-3333", "789 Maple St");
+        //Patient patient2 = new Patient("Bob White", "444-555-6666", "321 Oak St");
 
-        bookingSystem.addPatient(patient1);
-        bookingSystem.addPatient(patient2);
+        //bookingSystem.addPatient(patient1);
+        //bookingSystem.addPatient(patient2);
 
         // Sample Treatments
         bookingSystem.addTreatment(new Treatment("Massage", "Relieves muscle tension"));
@@ -255,7 +255,7 @@ public class Main {
         // Validate full name (letters only and at least two words)
         while (true) {
             System.out.println("\n════════════════════════════════");
-            System.out.print("Enter full name: ");
+            System.out.print("\nEnter full name: ");
             fullName = scanner.nextLine().trim();
             // Regex check: only letters and spaces, and at least two words
             if (!fullName.matches("^[A-Za-z]+(?:\\s+[A-Za-z]+)+$")) {
@@ -268,7 +268,7 @@ public class Main {
         String phone;
         // Validate phone number (numeric and >= 10 digits)
         while (true) {
-            System.out.print("Enter phone number: ");
+            System.out.print("\nEnter phone number: ");
             phone = scanner.nextLine().trim();
             // Regex check: only digits and at least 10 of them
             if (!phone.matches("^\\d{10,}$")) {
@@ -281,7 +281,7 @@ public class Main {
         String address;
         // Validate address (non-empty and sufficiently long)
         while (true) {
-            System.out.print("Enter address: ");
+            System.out.print("\nEnter address: ");
             address = scanner.nextLine().trim();
             if (address.length() < 4) {  // "more than a few characters" – here we require at least 4
                 System.out.println(" Address must be longer than a few characters. Please try again.");
@@ -295,14 +295,16 @@ public class Main {
         bookingSystem.addPatient(newPatient);
 
         System.out.println("\n Registration successful!");
-        System.out.println("Your Patient ID is: " + newPatient.getUniqueId());
+        System.out.println("\nYour Patient ID is: " + newPatient.getUniqueId());
         System.out.println("Please keep your Patient ID safe and do not share it with anyone.");
     }
 
     // Book an appointment
     private static void bookAppointment() {
         System.out.println("\n════════════════════════════════");
-        System.out.print("Enter Patient ID: ");
+        System.out.println("Book an Appointment");
+        System.out.println("════════════════════════════════");
+        System.out.print("\nEnter Patient ID: ");
         String patientID = scanner.nextLine();
         Patient patient = bookingSystem.getPatients().stream()
                 .filter(p -> p.getUniqueId().equals(patientID))
@@ -314,19 +316,38 @@ public class Main {
             return;
         }
 
-        System.out.print("Enter Physiotherapist Name: ");
-        String physioName = scanner.nextLine();
-        Physiotherapist physio = bookingSystem.getPhysiotherapistByName(physioName);
 
-        if (physio == null) {
-            System.out.println("Physiotherapist not found!");
+
+        // Show physiotherapists list
+        List<Physiotherapist> physios = bookingSystem.getAllPhysiotherapists();
+        if (physios.isEmpty()) {
+            System.out.println("No physiotherapists available.");
+            return;
+        }
+
+        System.out.println("\nSelect a Physiotherapist:");
+        for (int i = 0; i < physios.size(); i++) {
+            System.out.println((i + 1) + ". " + physios.get(i).getFullName());
+        }
+
+        Physiotherapist physio;
+        try {
+            System.out.print("\nEnter physiotherapist number: ");
+            int physioIndex = Integer.parseInt(scanner.nextLine().trim());
+            if (physioIndex < 1 || physioIndex > physios.size()) {
+                System.out.println("Invalid selection.");
+                return;
+            }
+            physio = physios.get(physioIndex - 1);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input.");
             return;
         }
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date;
         try {
-            System.out.print("Enter Date (yyyy-MM-dd): ");
+            System.out.print("\nEnter Date (yyyy-MM-dd): ");
             String dateInput = scanner.nextLine().trim();
             date = sdf.parse(dateInput);
         } catch (ParseException e) {
@@ -337,20 +358,20 @@ public class Main {
         int week = bookingSystem.getWeekFromDate(date);
 
 
-        System.out.print("Enter Date (e.g., 2025-04-15): ");
+        System.out.print("\nEnter Date (e.g., 2025-04-15): ");
 
 
-        System.out.print("Enter Time (e.g., 10:00 AM): ");
+        System.out.print("\nEnter Time (e.g., 10:00 AM): ");
         String time = scanner.nextLine();
 
-// Filter treatments to only those offered by the selected physiotherapist
+        // Show treatments based on physiotherapist's expertise
         List<Treatment> availableTreatments = bookingSystem.getAllTreatments().stream()
                 .filter(t -> physio.getExpertise().stream()
                         .anyMatch(e -> e.equalsIgnoreCase(t.getTreatmentName())))
                 .toList();
 
         if (availableTreatments.isEmpty()) {
-            System.out.println("\n⚠️ This physiotherapist has no treatments assigned or matching their expertise.");
+            System.out.println("\nThis physiotherapist has no matching treatments assigned.");
             return;
         }
 
@@ -359,23 +380,21 @@ public class Main {
             System.out.println((i + 1) + ". " + availableTreatments.get(i).getTreatmentName());
         }
 
-        int treatmentIndex;
+        Treatment selectedTreatment;
         try {
             System.out.print("\nSelect treatment number: ");
-            treatmentIndex = Integer.parseInt(scanner.nextLine().trim());
+            int treatmentIndex = Integer.parseInt(scanner.nextLine().trim());
             if (treatmentIndex < 1 || treatmentIndex > availableTreatments.size()) {
                 System.out.println("Invalid treatment selection.");
                 return;
             }
+            selectedTreatment = availableTreatments.get(treatmentIndex - 1);
         } catch (NumberFormatException e) {
-            System.out.println("Invalid input. Please enter a valid treatment number.");
+            System.out.println("Invalid input.");
             return;
         }
 
-        Treatment selectedTreatment = availableTreatments.get(treatmentIndex - 1);
-        String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
-
-// Proceed to book the appointment
+        String formattedDate = sdf.format(date);
         Appointment booked = bookingSystem.bookAppointment(patient, physio, week, formattedDate, time, selectedTreatment);
 
         if (booked != null) {
@@ -386,13 +405,12 @@ public class Main {
         } else {
             System.out.println("Failed to book appointment.");
         }
-
     }
 
     // Cancel an appointment
     private static void cancelAppointment() {
         System.out.println("\n════════════════════════════════");
-        System.out.print("Enter Appointment ID to cancel: ");
+        System.out.print("\nEnter Appointment ID to cancel: ");
         String appointmentID = scanner.nextLine();
 
         boolean success = bookingSystem.cancelAppointment(appointmentID);
@@ -808,7 +826,7 @@ public class Main {
         System.out.print("Address: ");
         String address = scanner.nextLine().trim();
 
-        System.out.print("Enter expertise areas (comma-separated): ");
+        System.out.print("\nEnter expertise areas (comma-separated): ");
         String[] expertise = scanner.nextLine().split(",");
         List<String> expertiseList = new ArrayList<>();
         for (String exp : expertise) {
