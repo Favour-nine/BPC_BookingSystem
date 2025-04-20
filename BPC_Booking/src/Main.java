@@ -112,11 +112,11 @@ public class Main {
     //  Preload some sample physiotherapists, patients, and treatments
     private static void initializeSampleData() {
         // Sample Physiotherapists
-        Physiotherapist physio1 = new Physiotherapist("Dr. James Smith", "123-456-7890", "123 Main St", Arrays.asList("Rehabilitation", "Osteopathy"));
-        Physiotherapist physio2 = new Physiotherapist("Dr. Sarah Johnson", "987-654-3210", "456 Elm St", Arrays.asList("Physiotherapy", "Massage"));
+        //Physiotherapist physio1 = new Physiotherapist("Dr. James Smith", "123-456-7890", "123 Main St", Arrays.asList("Rehabilitation", "Osteopathy"));
+        //Physiotherapist physio2 = new Physiotherapist("Dr. Sarah Johnson", "987-654-3210", "456 Elm St", Arrays.asList("Physiotherapy", "Massage"));
 
-        bookingSystem.addPhysiotherapist(physio1);
-        bookingSystem.addPhysiotherapist(physio2);
+        //bookingSystem.addPhysiotherapist(physio1);
+        //bookingSystem.addPhysiotherapist(physio2);
 
         // Sample Patients
         //Patient patient1 = new Patient("Alice Brown", "111-222-3333", "789 Maple St");
@@ -350,6 +350,18 @@ public class Main {
             System.out.print("\nEnter Date (yyyy-MM-dd): ");
             String dateInput = scanner.nextLine().trim();
             date = sdf.parse(dateInput);
+
+            Calendar minDate = Calendar.getInstance();
+            minDate.set(2025, Calendar.APRIL, 28);
+
+            Calendar maxDate = Calendar.getInstance();
+            maxDate.set(2025, Calendar.MAY, 25);
+
+            if (date.before(minDate.getTime()) || date.after(maxDate.getTime())) {
+                System.out.println("\nAppointments can only be booked between 28 April 2025 and 25 May 2025.");
+                return;
+            }
+
         } catch (ParseException e) {
             System.out.println("Invalid date format. Please use yyyy-MM-dd.");
             return;
@@ -357,12 +369,25 @@ public class Main {
 
         int week = bookingSystem.getWeekFromDate(date);
 
-
-        System.out.print("\nEnter Date (e.g., 2025-04-15): ");
-
-
         System.out.print("\nEnter Time (e.g., 10:00 AM): ");
-        String time = scanner.nextLine();
+        String time = scanner.nextLine().trim();
+
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
+        try {
+            Date parsedTime = timeFormat.parse(time);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(parsedTime);
+            int hour = cal.get(Calendar.HOUR_OF_DAY);
+
+            if (hour < 9 || hour > 15) {
+                System.out.println("\nAppointments can only be scheduled between 9:00 AM and 3:00 PM.");
+                return;
+            }
+        } catch (ParseException e) {
+            System.out.println("\nInvalid time format. Please enter a valid time like '10:00 AM'.");
+            return;
+        }
+
 
         // Show treatments based on physiotherapist's expertise
         List<Treatment> availableTreatments = bookingSystem.getAllTreatments().stream()
