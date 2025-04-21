@@ -771,62 +771,55 @@ public class Main {
     private static void addNewPhysiotherapist() {
         System.out.println("\n════════════════════════════════");
 
-        String name;
-        while (true) {
-            System.out.print("Full Name (e.g., Dr. John Doe): ");
-            name = scanner.nextLine().trim();
-            if (!name.matches("^[A-Za-z.\\s]+$") || name.length() < 5) {
-                System.out.println("❌ Invalid name. Please enter a valid full name with letters only.");
-            } else {
-                break;
+        try {
+            System.out.print("Full Name: ");
+            String name = scanner.nextLine().trim();
+            if (!name.matches("^[A-Za-z]+(?:\\s+[A-Za-z]+)+$")) {
+                System.out.println("Invalid full name. Must contain at least a first and last name.");
+                return;
             }
-        }
 
-        String phone;
-        while (true) {
-            System.out.print("Phone Number (10+ digits, no dashes): ");
-            phone = scanner.nextLine().trim();
+            System.out.print("Phone Number: ");
+            String phone = scanner.nextLine().trim();
             if (!phone.matches("^\\d{10,}$")) {
-                System.out.println("Invalid phone number. Use only digits with a minimum of 10 digits.");
-            } else {
-                break;
+                System.out.println("Invalid phone number. Must be numeric and at least 10 digits.");
+                return;
             }
-        }
 
-        String address;
-        while (true) {
             System.out.print("Address: ");
-            address = scanner.nextLine().trim();
+            String address = scanner.nextLine().trim();
             if (address.length() < 4) {
-                System.out.println("Address must be at least 4 characters.");
-            } else {
-                break;
+                System.out.println("Invalid address. Must be longer than a few characters.");
+                return;
             }
-        }
 
-        List<String> allExpertise = bookingSystem.getAllTreatments()
-                .stream()
-                .map(Treatment::getRequiredExpertise)
-                .distinct()
-                .toList();
-
-        String expertise;
-        while (true) {
-            System.out.println("\nAvailable Expertise Areas: " + allExpertise);
-            System.out.print("Enter one area of expertise from the list above: ");
-            expertise = scanner.nextLine().trim();
-
-            if (!allExpertise.contains(expertise)) {
-                System.out.println("Invalid expertise. Choose one from the available options.");
-            } else {
-                break;
+            System.out.print("Enter ONE area of expertise (e.g., Massage): ");
+            String expertise = scanner.nextLine().trim();
+            if (!expertise.matches("^[A-Za-z ]+$")) {
+                System.out.println("Invalid expertise. Letters only.");
+                return;
             }
-        }
 
-        Physiotherapist newPhysio = new Physiotherapist(name, phone, address, List.of(expertise));
-        bookingSystem.addPhysiotherapist(newPhysio);
-        System.out.println("New physiotherapist added successfully!");
+            List<String> expertiseList = List.of(expertise);
+            Physiotherapist newPhysio = new Physiotherapist(name, phone, address, expertiseList);
+            bookingSystem.addPhysiotherapist(newPhysio);
+
+            // Add a new treatment that matches the expertise
+            String treatmentName = expertise;
+            String description = "General treatment for " + expertise.toLowerCase();
+            Treatment newTreatment = new Treatment(treatmentName, description, expertise);
+            bookingSystem.addTreatment(newTreatment);
+
+            // Regenerate treatment timetable for the new physio only
+            bookingSystem.generateTreatmentTimetable(List.of(newTreatment));
+
+            System.out.println("New physiotherapist and treatment added successfully!");
+
+        } catch (Exception e) {
+            System.out.println("Error adding physiotherapist: " + e.getMessage());
+        }
     }
+
 
 
     private static void removePhysiotherapist() {
