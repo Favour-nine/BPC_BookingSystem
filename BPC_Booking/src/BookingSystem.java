@@ -114,10 +114,8 @@ public class BookingSystem {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date;
         try {
-            // Convert the input string to a proper Date object
             date = sdf.parse(dateStr);
-        }
-        catch (ParseException e) {
+        } catch (ParseException e) {
             System.out.println("Invalid date format. Use yyyy-MM-dd.");
             return null;
         }
@@ -131,7 +129,7 @@ public class BookingSystem {
             return null;
         }
 
-        // Check if the physiotherapist has expertise in the selected treatment
+        // Check physiotherapist expertise
         boolean hasExpertise = physio.getExpertise().stream()
                 .anyMatch(exp -> exp.equalsIgnoreCase(treatment.getTreatmentName()));
         if (!hasExpertise) {
@@ -140,48 +138,52 @@ public class BookingSystem {
             return null;
         }
 
-        // Check for time conflicts (1-hour break = 2-hour buffer)
-        List<Appointment> existingAppointments = physio.getAvailableAppointments(week);
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
-
-        try {
-            Date requestedTime = timeFormat.parse(time);
-
-            for (Appointment existing : existingAppointments) {
-                if (existing.getDate().equals(date)) {
-                    Date existingTime = timeFormat.parse(existing.getTime());
-                    long diff = Math.abs(requestedTime.getTime() - existingTime.getTime());
-                    long diffInMinutes = diff / (1000 * 60);
-                    if (diffInMinutes < 120) { // Less than 2 hours apart
-                        System.out.println("\nCannot book: Physiotherapist requires at least 1 hour break between appointments.");
-                        return null;
-                    }
+        // ✅ Find the exact existing appointment slot
+        List<Appointment> physioAppointments = physio.getAllAppointments();
+        for (Appointment existing : physioAppointments) {
+            if (existing.getDate().equals(date) && existing.getTime().equalsIgnoreCase(time)) {
+                if (existing.getPatient() != null) {
+                    System.out.println("Slot already taken.");
+                    return null;
                 }
+
+                // Optionally: Add 1-hour break buffer check here if needed
+
+                // ✅ Book the slot
+                existing.setPatient(patient);
+                existing.setTreatment(treatment);
+                existing.setStatus("Booked");
+
+                patient.bookAppointment(existing);
+                appointments.add(existing); // Track it globally
+                return existing;
             }
-        } catch (ParseException e) {
-            System.out.println("Invalid time format. Use HH:mm.");
+        }
+
+        // 🚫 Don't create a new slot – return failure
+        System.out.println("Selected appointment slot not found in the existing schedule.");
+        return null;
+    }
+
+    public Appointment finalizeBooking(Appointment appointment, Patient patient) {
+        if (appointment == null || patient == null) {
             return null;
         }
 
-
-        // Create the new appointment to be booked
-        Appointment newAppointment = new Appointment(UUID.randomUUID().toString(), date, time, treatment, physio, patient);
-
-
-        // Ensure there is no existing appointment with the same time and date
-        boolean timeConflict = existingAppointments.stream()
-                .anyMatch(app -> app.getTime().equals(time) && app.getDate().equals(date));
-
-        if (!timeConflict) {
-            // If no conflict, add to physiotherapist, patient, and system-wide appointment list
-            physio.addAppointment(week, newAppointment);
-            patient.bookAppointment(newAppointment);
-            appointments.add(newAppointment);
-            return newAppointment;
+        if (appointment.getPatient() != null) {
+            System.out.println("This appointment is already booked.");
+            return null;
         }
-        return null;
 
+        appointment.setPatient(patient);
+        appointment.setStatus("Booked");
+        patient.bookAppointment(appointment);
+        appointments.add(appointment); // Add to global list if not already
+
+        return appointment;
     }
+
+
 
     // Cancel an appointment
     public boolean cancelAppointment(String appointmentID) {

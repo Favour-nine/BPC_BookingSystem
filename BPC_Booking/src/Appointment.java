@@ -1,6 +1,7 @@
 import java.util.Date;
 import java.io.Serializable;
 
+
 public class Appointment implements Serializable {
     // Attributes
     private String appointmentID;
@@ -10,6 +11,7 @@ public class Appointment implements Serializable {
     private Physiotherapist physiotherapist;
     private Patient patient;
     private String status; // "Booked", "Cancelled", "Attended"
+    private static final long serialVersionUID = 1L;
 
     // Constructor
     public Appointment(String appointmentID, Date date, String time, Treatment treatment, Physiotherapist physiotherapist, Patient patient){
@@ -44,6 +46,9 @@ public class Appointment implements Serializable {
     }
 
     public Patient getPatient(){
+        if (patient != null && !"Booked".equals(status)) {
+            status = "Booked"; // sync fix
+        }
         return patient;
     }
 
@@ -54,6 +59,11 @@ public class Appointment implements Serializable {
         this.patient = patient;
         this.status = "Booked";
     }
+
+    public void setTreatment(Treatment treatment) {
+        this.treatment = treatment;
+    }
+
 
     public String getStatus(){
         return status;

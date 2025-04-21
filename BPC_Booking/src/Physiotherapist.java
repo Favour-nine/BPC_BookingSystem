@@ -49,6 +49,14 @@ public class Physiotherapist extends Member implements Serializable {
             schedule.put(week, new ArrayList<>());
         }
     }
+    public List<Appointment> getAllAppointments() {
+        List<Appointment> allAppointments = new ArrayList<>();
+        for (List<Appointment> weekList : schedule.values()) {
+            allAppointments.addAll(weekList);
+        }
+        return allAppointments;
+    }
+
 
     // Display physiotherapist details
     public String getPhysiotherapistDetails() {
