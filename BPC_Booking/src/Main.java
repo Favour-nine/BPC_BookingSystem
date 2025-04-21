@@ -388,7 +388,7 @@ public class Main {
         System.out.println("\nMatching Appointments:");
         for (int i = 0; i < matchingAppointments.size(); i++) {
             Appointment a = matchingAppointments.get(i);
-            String status = (a.getPatient() == null) ? "Available" : a.getStatus();
+            String status = a.getStatus();
             System.out.printf("%d. %s | %s | %s | %s | Status: %s%n",
                     i + 1,
                     a.getPhysiotherapist().getFullName(),
