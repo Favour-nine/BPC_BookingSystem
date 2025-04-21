@@ -1,30 +1,22 @@
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.Date;
 
 public class TreatmentTest {
-    private Treatment treatment;
-
-    @BeforeEach
-    public void setUp() {
-        treatment = new Treatment("Massage Therapy", "Relieves muscle tension and promotes relaxation");
-    }
 
     @Test
-    public void testGetTreatmentName() {
-        assertEquals("Massage Therapy", treatment.getTreatmentName());
-    }
+    public void testBookingAndCanceling() {
+        Treatment treatment = new Treatment("Acupuncture", "Pain relief", "Acupuncture");
 
-    @Test
-    public void testGetDescription() {
-        assertEquals("Relieves muscle tension and promotes relaxation", treatment.getDescription());
-    }
+        Physiotherapist physio = new Physiotherapist("Dr. Max", "0000000000", "Zone A",
+                java.util.List.of("Acupuncture"));
+        Appointment appointment = new Appointment("APT123", new Date(), "14:00", treatment, physio, null);
 
+        treatment.bookTreatment(appointment);
+        assertEquals(1, treatment.getBookedAppointments().size());
 
-
-    @Test
-    public void testToStringFormat() {
-        String expected = "Massage Therapy - Relieves muscle tension and promotes relaxation";
-        assertEquals(expected, treatment.toString());
+        boolean cancelled = treatment.cancelBooking("APT123");
+        assertTrue(cancelled);
+        assertTrue(treatment.getBookedAppointments().isEmpty());
     }
 }

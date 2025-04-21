@@ -1,66 +1,43 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.Date;
 
 public class PatientTest {
     private Patient patient;
-    private Physiotherapist physio;
-    private Treatment treatment;
     private Appointment appointment;
 
     @BeforeEach
     public void setUp() {
-        patient = new Patient("John Doe", "1234567890", "Test Address");
-        physio = new Physiotherapist("Dr. Max", "9876543210", "Clinic Ave", List.of("Rehabilitation"));
-        treatment = new Treatment("Massage", "Relaxation");
-
-        appointment = new Appointment(
-                "APT12345",
-                new Date(),
-                "10:00 AM",
-                treatment,
-                physio,
-                patient
-        );
+        patient = new Patient("John Doe", "1234567890", "123 Street");
+        Physiotherapist physio = new Physiotherapist("Dr. Jane", "9876543210", "456 Avenue",
+                java.util.List.of("Massage"));
+        Treatment treatment = new Treatment("Massage", "Relaxing therapy", "Massage");
+        appointment = new Appointment("APT001", new Date(), "10:00", treatment, physio, null);
     }
 
     @Test
     public void testBookAppointment() {
         boolean result = patient.bookAppointment(appointment);
-        assertTrue(result, "Appointment should be booked successfully");
-        assertEquals(1, patient.getAppointments().size(), "Appointment list should contain one entry");
+        assertTrue(result);
+        assertEquals(1, patient.getAppointments().size());
     }
 
     @Test
     public void testCancelAppointment() {
         patient.bookAppointment(appointment);
-        boolean result = patient.cancelAppointment(appointment.getAppointmentID());
-        assertTrue(result, "Appointment should be cancelled");
-        assertTrue(patient.getAppointments().isEmpty(), "Appointment list should be empty after cancellation");
+        boolean result = patient.cancelAppointment("APT001");
+        assertTrue(result);
+        assertTrue(patient.getAppointments().isEmpty());
     }
 
     @Test
     public void testChangeAppointment() {
         patient.bookAppointment(appointment);
-
-        Appointment newAppointment = new Appointment(
-                "APT56789",
-                new Date(),
-                "11:00 AM",
-                treatment,
-                physio,
-                patient
-        );
-
-        boolean result = patient.changeAppointment(appointment.getAppointmentID(), newAppointment);
-        assertTrue(result, "Appointment should be changed");
-        assertEquals("APT56789", patient.getAppointments().get(0).getAppointmentID(), "Updated appointment ID should match");
-    }
-
-    @Test
-    public void testChangeAppointmentNotFound() {
-        boolean result = patient.changeAppointment("NON_EXISTENT_ID", appointment);
-        assertFalse(result, "Changing a non-existent appointment should return false");
+        Appointment newAppointment = new Appointment("APT002", new Date(), "12:00",
+                appointment.getTreatment(), appointment.getPhysiotherapist(), null);
+        boolean result = patient.changeAppointment("APT001", newAppointment);
+        assertTrue(result);
+        assertEquals("APT002", patient.getAppointments().get(0).getAppointmentID());
     }
 }

@@ -35,6 +35,7 @@ public class Physiotherapist extends Member implements Serializable {
         return true;
     }*/
 
+
     // Get available appointments for a given week
     public List<Appointment> getAvailableAppointments(int week){
         return schedule.getOrDefault(week, new ArrayList<>());

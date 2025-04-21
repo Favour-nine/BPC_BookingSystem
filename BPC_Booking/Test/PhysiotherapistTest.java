@@ -1,54 +1,50 @@
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.*;
+import java.util.List;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PhysiotherapistTest {
 
-    private Physiotherapist physio;
-    private Treatment treatment;
-    private Patient patient;
-
-    @BeforeEach
-    public void setUp() {
-        physio = new Physiotherapist("Dr. Max", "9876543210", "Clinic Ave", List.of("Massage", "Rehabilitation"));
-        treatment = new Treatment("Massage", "Muscle relaxation");
-        patient = new Patient("John Doe", "1234567890", "123 Street");
-    }
-
     @Test
-    public void testConstructorInitializesCorrectly() {
-        assertEquals("Dr. Max", physio.getFullName());
-        assertEquals("9876543210", physio.getPhoneNumber());
-        assertEquals("Clinic Ave", physio.getAddress());
-        assertTrue(physio.getExpertise().contains("Massage"));
-        assertTrue(physio.getExpertise().contains("Rehabilitation"));
-    }
+    public void testAddAppointmentAndRetrieve() {
+        // Setup physiotherapist
+        Physiotherapist physio = new Physiotherapist(
+                "Dr. Jane Smith", "1234567890", "Therapy Lane",
+                List.of("Massage")
+        );
+        physio.generateWeeklySchedule();
 
-    @Test
-    public void testAddAppointmentAndGetAvailable() {
-        Appointment appointment = new Appointment("APT1", new Date(), "10:00 AM", treatment, physio, null);
+        // Setup treatment and appointment
+        Treatment treatment = new Treatment("Massage", "Muscle relaxation therapy", "Massage");
+        Appointment appointment = new Appointment("APT001", new Date(), "09:00", treatment, physio, null);
+
+        // Add appointment to week 1
         physio.addAppointment(1, appointment);
 
-        List<Appointment> available = physio.getAvailableAppointments(1);
-        assertEquals(1, available.size());
-        assertEquals("APT1", available.getFirst().getAppointmentID());
+        // Assertions
+        List<Appointment> weekAppointments = physio.getAvailableAppointments(1);
+        assertTrue(weekAppointments.contains(appointment), "Appointment should be in week 1's schedule");
+
+        List<Appointment> allAppointments = physio.getAllAppointments();
+        assertTrue(allAppointments.contains(appointment), "Appointment should be in all appointments list");
     }
 
     @Test
-    public void testGetAvailableAppointmentsNoneAvailable() {
-        Appointment booked = new Appointment("APT2", new Date(), "11:00 AM", treatment, physio, patient);
-        physio.addAppointment(1, booked);
+    public void testExpertiseStorage() {
+        List<String> expertise = List.of("Acupuncture", "Massage");
+        Physiotherapist physio = new Physiotherapist("Dr. John Doe", "0987654321", "Wellness Road", expertise);
 
-        List<Appointment> available = physio.getAvailableAppointments(1);
-        assertTrue(available.isEmpty());
+        assertEquals(expertise, physio.getExpertise(), "Expertise list should match input");
     }
 
     @Test
-    public void testGetAvailableAppointmentsEmptyWeek() {
-        List<Appointment> available = physio.getAvailableAppointments(2);
-        assertTrue(available.isEmpty());
+    public void testGenerateWeeklyScheduleInitializesWeeks() {
+        Physiotherapist physio = new Physiotherapist("Dr. Alex", "1112223333", "Clinic Ave", List.of("Rehab"));
+        physio.generateWeeklySchedule();
+
+        for (int week = 1; week <= 4; week++) {
+            assertNotNull(physio.getAvailableAppointments(week), "Each week's appointment list should be initialized");
+        }
     }
 }

@@ -79,6 +79,10 @@ public class Appointment implements Serializable {
         this.status = status;
     }
 
+    public void attend() {
+        this.status = "Attended";
+    }
+
     // Method to cancel appointment
 
     public void cancel(){
