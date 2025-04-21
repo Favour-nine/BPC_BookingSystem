@@ -153,7 +153,7 @@ public class Main {
         Patient p9 = new Patient("Ian Orange", "6789012345", "44 Ivy Blvd");
         Patient p10 = new Patient("Jade Gold", "7890123456", "55 Juniper Trl");
         Patient p11 = new Patient("Kevin Violet", "8901234567", "66 Kingfisher Way");
-        Patient p12 = new Patient("Lara Silver", "9012345678", "77 Lavender Cres");
+        Patient p12 = new Patient("Lara Silver", "9012345678", "77 Lavender Crescent");
         Patient p13 = new Patient("Mason White", "1023456789", "88 Maple St");
         Patient p14 = new Patient("Nina Brown", "2134567890", "99 Nutmeg Rd");
         Patient p15 = new Patient("Oscar Gray", "3245678901", "100 Oak Hill");
@@ -268,82 +268,22 @@ public class Main {
         }
     }
 
-    private static void reportMenu() {
-        while (true) {
-            System.out.println("\n════════════════════════════════");
-            System.out.println("\n=== Reports ===");
-            System.out.println("[1] Generate appointment report");
-            System.out.println("[2] Generate analytics report");
-            System.out.println("[0] Back to main menu");
-            System.out.print("\nEnter your choice: ");
 
-            try {
-                int choice = Integer.parseInt(scanner.nextLine().trim());
-                switch (choice) {
-                    case 1 -> bookingSystem.generateReport();
-                    case 2 -> bookingSystem.generateAnalyticsReport();
-                    case 0 -> { return; }
-                    default -> System.out.println("Invalid choice.");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input.");
-            }
-        }
-    }
-
-
-
-
-    // Register a new patient and show their unique ID
 // Register a new patient and show their unique ID with input validation
-    private static void registerNewPatient() {
-        String fullName;
-        // Validate full name (letters only and at least two words)
-        while (true) {
-            System.out.println("\n════════════════════════════════");
-            System.out.print("\nEnter full name: ");
-            fullName = scanner.nextLine().trim();
-            // Regex check: only letters and spaces, and at least two words
-            if (!fullName.matches("^[A-Za-z]+(?:\\s+[A-Za-z]+)+$")) {
-                System.out.println(" Full name must contain only letters and include at least a first and last name. Please try again.");
-            } else {
-                break;
-            }
-        }
+private static void registerNewPatient() {
+    System.out.println("\n════════════════════════════════");
+    String fullName = getValidatedName();
+    String phone = getValidatedPhone();
+    String address = getValidatedAddress();
 
-        String phone;
-        // Validate phone number (numeric and >= 10 digits)
-        while (true) {
-            System.out.print("\nEnter phone number: ");
-            phone = scanner.nextLine().trim();
-            // Regex check: only digits and at least 10 of them
-            if (!phone.matches("^\\d{10,}$")) {
-                System.out.println(" Phone number must be numeric and at least 10 digits long. Please try again.");
-            } else {
-                break;
-            }
-        }
+    Patient newPatient = new Patient(fullName, phone, address);
+    bookingSystem.addPatient(newPatient);
 
-        String address;
-        // Validate address (non-empty and sufficiently long)
-        while (true) {
-            System.out.print("\nEnter address: ");
-            address = scanner.nextLine().trim();
-            if (address.length() < 4) {  // "more than a few characters" – here we require at least 4
-                System.out.println(" Address must be longer than a few characters. Please try again.");
-            } else {
-                break;
-            }
-        }
+    System.out.println("\nRegistration successful!");
+    System.out.println("Your Patient ID is: " + newPatient.getUniqueId());
+    System.out.println("Please keep your Patient ID safe and do not share it with anyone.");
+}
 
-        // All inputs are valid at this point, proceed to create the patient
-        Patient newPatient = new Patient(fullName, phone, address);
-        bookingSystem.addPatient(newPatient);
-
-        System.out.println("\n Registration successful!");
-        System.out.println("\nYour Patient ID is: " + newPatient.getUniqueId());
-        System.out.println("Please keep your Patient ID safe and do not share it with anyone.");
-    }
 
     // Book an appointment
     private static void bookAppointment() {
@@ -437,14 +377,6 @@ public class Main {
             System.out.println("Slot already taken.\nFailed to book appointment. It may no longer be available.");
             return;
         }
-
-        // Step 6: Proceed to book via BookingSystem
-        Physiotherapist physio = selected.getPhysiotherapist();
-        Treatment treatment = selected.getTreatment();
-        Date date = selected.getDate();
-        String time = selected.getTime();
-        int week = bookingSystem.getWeekFromDate(date);
-        String formattedDate = sdf.format(date);
 
         Appointment booked = bookingSystem.finalizeBooking(selected, patient);
 
@@ -660,7 +592,7 @@ public class Main {
 
         Appointment oldAppointment = appointments.get(index);
         Physiotherapist physio = oldAppointment.getPhysiotherapist();
-        Treatment treatment = oldAppointment.getTreatment();
+        //Treatment treatment = oldAppointment.getTreatment();
 
         // Collect new date/time
         System.out.print("Enter new date (yyyy-MM-dd): ");
@@ -676,7 +608,6 @@ public class Main {
             return;
         }
 
-        int newWeek = bookingSystem.getWeekFromDate(newDate);
         String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(newDate);
 
         Appointment newAppointment = null;
@@ -689,7 +620,7 @@ public class Main {
                 break;
             }
         }
-;
+
         if (newAppointment != null) {
             oldAppointment.setStatus("Cancelled");
             patient.cancelAppointment(oldAppointment.getAppointmentID());
@@ -772,26 +703,9 @@ public class Main {
         System.out.println("\n════════════════════════════════");
 
         try {
-            System.out.print("Full Name: ");
-            String name = scanner.nextLine().trim();
-            if (!name.matches("^[A-Za-z]+(?:\\s+[A-Za-z]+)+$")) {
-                System.out.println("Invalid full name. Must contain at least a first and last name.");
-                return;
-            }
-
-            System.out.print("Phone Number: ");
-            String phone = scanner.nextLine().trim();
-            if (!phone.matches("^\\d{10,}$")) {
-                System.out.println("Invalid phone number. Must be numeric and at least 10 digits.");
-                return;
-            }
-
-            System.out.print("Address: ");
-            String address = scanner.nextLine().trim();
-            if (address.length() < 4) {
-                System.out.println("Invalid address. Must be longer than a few characters.");
-                return;
-            }
+            String name = getValidatedName();
+            String phone = getValidatedPhone();
+            String address = getValidatedAddress();
 
             System.out.print("Enter ONE area of expertise (e.g., Massage): ");
             String expertise = scanner.nextLine().trim();
@@ -804,13 +718,12 @@ public class Main {
             Physiotherapist newPhysio = new Physiotherapist(name, phone, address, expertiseList);
             bookingSystem.addPhysiotherapist(newPhysio);
 
-            // Add a new treatment that matches the expertise
-            String treatmentName = expertise;
-            String description = "General treatment for " + expertise.toLowerCase();
-            Treatment newTreatment = new Treatment(treatmentName, description, expertise);
+            Treatment newTreatment = new Treatment(
+                    expertise,
+                    "General treatment for " + expertise.toLowerCase(),
+                    expertise
+            );
             bookingSystem.addTreatment(newTreatment);
-
-            // Regenerate treatment timetable for the new physio only
             bookingSystem.generateTreatmentTimetable(List.of(newTreatment));
 
             System.out.println("New physiotherapist and treatment added successfully!");
@@ -819,6 +732,7 @@ public class Main {
             System.out.println("Error adding physiotherapist: " + e.getMessage());
         }
     }
+
 
 
 
@@ -834,6 +748,43 @@ public class Main {
             System.out.println("Physiotherapist not found.");
         }
     }
+
+    private static String getValidatedName() {
+        while (true) {
+            System.out.print("Full Name: ");
+            String name = scanner.nextLine().trim();
+            if (!name.matches("^[A-Za-z]+(?:\\s+[A-Za-z]+)+$")) {
+                System.out.println("Invalid full name. Must contain at least a first and last name.");
+            } else {
+                return name;
+            }
+        }
+    }
+
+    private static String getValidatedPhone() {
+        while (true) {
+            System.out.print("Phone Number: ");
+            String phone = scanner.nextLine().trim();
+            if (!phone.matches("^\\d{10,}$")) {
+                System.out.println("Invalid phone number. Must be numeric and at least 10 digits.");
+            } else {
+                return phone;
+            }
+        }
+    }
+
+    private static String getValidatedAddress() {
+        while (true) {
+            System.out.print("Address: ");
+            String address = scanner.nextLine().trim();
+            if (address.length() < 4) {
+                System.out.println("Invalid address. Must be longer than a few characters.");
+            } else {
+                return address;
+            }
+        }
+    }
+
 
 
 }
