@@ -1,9 +1,12 @@
 import java.util.*;
+import java.io.Serial;
+
 import java.io.Serializable;
 public class Patient extends Member implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
     // List of appointments
-    private List<Appointment> appointmentList;
+    private final List<Appointment> appointmentList;
 
     // Constructor
     public Patient(String fullName, String phoneNumber, String address){

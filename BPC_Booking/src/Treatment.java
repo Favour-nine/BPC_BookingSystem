@@ -1,14 +1,19 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.io.Serializable;
+import java.io.Serial;
 
 public class Treatment implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
     // Attributes
-    private String treatmentName;
-    private String description;
-    private boolean isAvailable;
-    private List<Appointment> bookedAppointments;
-    private String requiredExpertise;
+    private final String treatmentName;
+    private final String description;
+    private final boolean isAvailable;
+    private final List<Appointment> bookedAppointments;
+    private final String requiredExpertise;
+
 
     // Constructor
     public Treatment(String treatmentName, String description, String requiredExpertise) {

@@ -1,10 +1,13 @@
 import java.util.*;
+import java.io.Serial;
 import java.io.Serializable;
 public class Physiotherapist extends Member implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
+
     // Additional attributes
-    private List<String> expertise;
-    private Map<Integer, List<Appointment>> schedule;// Weekly schedule (Week number → Appointments)
+    private final List<String> expertise;
+    private final Map<Integer, List<Appointment>> schedule;// Weekly schedule (Week number → Appointments)
 
     // Constructor
     public Physiotherapist(String fullName, String phoneNumber, String address, List<String> expertise){
@@ -38,10 +41,11 @@ public class Physiotherapist extends Member implements Serializable {
     }
 
     // Add an appointment to the schedule
-    public boolean addAppointment(int week, Appointment appointment) {
+    public void addAppointment(int week, Appointment appointment) {
         schedule.putIfAbsent(week, new ArrayList<>());
-        return schedule.get(week).add(appointment);
+        schedule.get(week).add(appointment);
     }
+
 
     // Generate weekly schedule
     public void generateWeeklySchedule() {

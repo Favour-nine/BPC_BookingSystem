@@ -12,10 +12,10 @@ import java.io.FileWriter;
 
 public class BookingSystem {
     // Attributes
-    private List<Physiotherapist> physiotherapists;
-    private List<Patient> patients;
-    private List<Appointment> appointments;
-    private List<Treatment> treatments = new ArrayList<>();
+    private final List<Physiotherapist> physiotherapists;
+    private final List<Patient> patients;
+    private final List<Appointment> appointments;
+    private final List<Treatment> treatments = new ArrayList<>();
 
     // Constructor
     public BookingSystem() {
@@ -59,6 +59,7 @@ public class BookingSystem {
     }
 
     // Remove a patient
+    @SuppressWarnings("unused")
     public boolean removePatient(String patientID) {
         return patients.removeIf(patient -> patient.getUniqueId().equals(patientID));
     }
@@ -110,7 +111,8 @@ public class BookingSystem {
     }
 
     // Book an appointment only if no time conflict exists for the physiotherapist at the specified week/date/time
-    public Appointment bookAppointment(Patient patient, Physiotherapist physio, int week, String dateStr, String time, Treatment treatment) {
+    @SuppressWarnings("unused")
+    public Appointment bookAppointment(Patient patient, Physiotherapist physio,int week, String dateStr, String time, Treatment treatment) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date;
         try {
@@ -138,7 +140,7 @@ public class BookingSystem {
             return null;
         }
 
-        // ✅ Find the exact existing appointment slot
+        // Find the exact existing appointment slot
         List<Appointment> physioAppointments = physio.getAllAppointments();
         for (Appointment existing : physioAppointments) {
             if (existing.getDate().equals(date) && existing.getTime().equalsIgnoreCase(time)) {
@@ -149,7 +151,7 @@ public class BookingSystem {
 
                 // Optionally: Add 1-hour break buffer check here if needed
 
-                // ✅ Book the slot
+                // Book the slot
                 existing.setPatient(patient);
                 existing.setTreatment(treatment);
                 existing.setStatus("Booked");
@@ -272,7 +274,7 @@ public class BookingSystem {
 
     // Generate 4-week timetable with treatments for all physiotherapists
     public void generateTreatmentTimetable(List<Treatment> treatments) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
         Calendar calendar = Calendar.getInstance();
         calendar.set(2025, Calendar.MAY, 5); // Start from May 5, 2025 (Monday)
 
@@ -286,10 +288,10 @@ public class BookingSystem {
 
                 for (int day = 0; day < 5; day++) { // Monday to Friday
                     for (int hour = 9; hour <= 15; hour += 2) { // 1-hour break between = every 2 hours
-                        Date date = (Date) dayPointer.getTime();
+                        Date date = dayPointer.getTime();
                         String time = hour + ":00";
 
-                        // Only assign treatments matching physio's expertise
+                        // Only assign treatments matching physios expertise
                         List<Treatment> validTreatments = treatments.stream()
                                 .filter(t -> physio.getExpertise().contains(t.getRequiredExpertise()))
                                 .toList();

@@ -651,6 +651,7 @@ private static void registerNewPatient() {
             System.out.println("[4] Remove a physiotherapist");
             System.out.println("[5] Generate appointment report");
             System.out.println("[6] Export report to file");
+            System.out.println("[7] View analytics report");
             System.out.println("[0] Back to main menu");
             System.out.print("\nEnter your choice: ");
 
@@ -667,6 +668,7 @@ private static void registerNewPatient() {
                         String filename = scanner.nextLine();
                         bookingSystem.exportReportToFile(filename);
                     }
+                    case 7 -> bookingSystem.generateAnalyticsReport();
 
                     case 0 -> { return; }
                     default -> System.out.println("Invalid choice.");
@@ -694,7 +696,8 @@ private static void registerNewPatient() {
             System.out.println("No physiotherapists found.");
         } else {
             for (Physiotherapist p : physios) {
-                System.out.println("- " + p.getFullName() + " | Expertise: " + p.getExpertise());
+                System.out.println(p.getPhysiotherapistDetails());
+
             }
         }
     }

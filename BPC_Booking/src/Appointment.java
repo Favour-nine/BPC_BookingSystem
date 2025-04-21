@@ -1,17 +1,20 @@
 import java.util.Date;
+import java.io.Serial;
 import java.io.Serializable;
 
 
 public class Appointment implements Serializable {
     // Attributes
-    private String appointmentID;
-    private Date date;
-    private String time;
+    private final String appointmentID;
+    private final Date date;
+    private final String time;
     private Treatment treatment;
-    private Physiotherapist physiotherapist;
+    private final Physiotherapist physiotherapist;
     private Patient patient;
     private String status; // "Booked", "Cancelled", "Attended"
+    @Serial
     private static final long serialVersionUID = 1L;
+
 
     // Constructor
     public Appointment(String appointmentID, Date date, String time, Treatment treatment, Physiotherapist physiotherapist, Patient patient){
@@ -65,26 +68,23 @@ public class Appointment implements Serializable {
     }
 
 
-    public String getStatus(){
+    public String getStatus() {
         return status;
     }
+
+
+
 
     public void setStatus(String status) {
         this.status = status;
     }
 
-    // Methods to update appointment status
-    public void book(){
-        this.status = "Booked";
-    }
+    // Method to cancel appointment
 
     public void cancel(){
         this.status = "Cancelled";
     }
 
-    public void attend(){
-        this.status = "Attended";
-    }
 
     @Override
     public String toString() {
