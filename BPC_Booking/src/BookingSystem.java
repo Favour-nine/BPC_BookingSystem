@@ -196,6 +196,35 @@ public class BookingSystem {
         return false;
     }
 
+    // Remove a physiotherapist by name
+    public boolean removePhysiotherapistByName(String name) {
+        Physiotherapist physio = physiotherapists.stream()
+                .filter(p -> p.getFullName().equalsIgnoreCase(name.trim()))
+                .findFirst()
+                .orElse(null);
+
+        if (physio == null) return false;
+
+        // 1. Remove from global appointments list
+        List<Appointment> toRemove = new ArrayList<>();
+        for (Appointment a : appointments) {
+            if (a.getPhysiotherapist().getFullName().equalsIgnoreCase(name)) {
+                // 2. Remove from patient’s appointment list if booked
+                if (a.getPatient() != null) {
+                    a.getPatient().cancelAppointment(a.getAppointmentID());
+                }
+                toRemove.add(a);
+            }
+        }
+        appointments.removeAll(toRemove);
+
+        // 3. Remove physiotherapist from system
+        physiotherapists.remove(physio);
+
+        return true;
+    }
+
+
     // Generate a report of all appointments
     public void generateReport() {
         System.out.println("\n=== Appointment Report ===\n");

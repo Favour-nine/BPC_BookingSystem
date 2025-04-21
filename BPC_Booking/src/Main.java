@@ -823,13 +823,13 @@ public class Main {
 
 
     private static void removePhysiotherapist() {
-        System.out.print("\n1Enter full name of physiotherapist to remove: ");
+        System.out.print("\nEnter full name of physiotherapist to remove: ");
         String name = scanner.nextLine().trim();
-        Physiotherapist physio = bookingSystem.getPhysiotherapistByName(name);
 
-        if (physio != null) {
-            bookingSystem.getAllPhysiotherapists().remove(physio); // removes from the internal list
-            System.out.println("Physiotherapist removed.");
+        boolean success = bookingSystem.removePhysiotherapistByName(name);
+
+        if (success) {
+            System.out.println("Physiotherapist and all associated appointments removed.");
         } else {
             System.out.println("Physiotherapist not found.");
         }
