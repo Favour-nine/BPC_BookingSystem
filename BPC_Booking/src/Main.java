@@ -770,27 +770,64 @@ public class Main {
 
     private static void addNewPhysiotherapist() {
         System.out.println("\n════════════════════════════════");
-        System.out.print("Full Name: ");
-        String name = scanner.nextLine().trim();
 
-        System.out.print("Phone Number: ");
-        String phone = scanner.nextLine().trim();
-
-        System.out.print("Address: ");
-        String address = scanner.nextLine().trim();
-
-        System.out.print("\nEnter expertise areas (comma-separated): ");
-        String[] expertise = scanner.nextLine().split(",");
-        List<String> expertiseList = new ArrayList<>();
-        for (String exp : expertise) {
-            expertiseList.add(exp.trim());
+        String name;
+        while (true) {
+            System.out.print("Full Name (e.g., Dr. John Doe): ");
+            name = scanner.nextLine().trim();
+            if (!name.matches("^[A-Za-z.\\s]+$") || name.length() < 5) {
+                System.out.println("❌ Invalid name. Please enter a valid full name with letters only.");
+            } else {
+                break;
+            }
         }
 
-        Physiotherapist newPhysio = new Physiotherapist(name, phone, address, expertiseList);
-        bookingSystem.addPhysiotherapist(newPhysio);
+        String phone;
+        while (true) {
+            System.out.print("Phone Number (10+ digits, no dashes): ");
+            phone = scanner.nextLine().trim();
+            if (!phone.matches("^\\d{10,}$")) {
+                System.out.println("Invalid phone number. Use only digits with a minimum of 10 digits.");
+            } else {
+                break;
+            }
+        }
 
+        String address;
+        while (true) {
+            System.out.print("Address: ");
+            address = scanner.nextLine().trim();
+            if (address.length() < 4) {
+                System.out.println("Address must be at least 4 characters.");
+            } else {
+                break;
+            }
+        }
+
+        List<String> allExpertise = bookingSystem.getAllTreatments()
+                .stream()
+                .map(Treatment::getRequiredExpertise)
+                .distinct()
+                .toList();
+
+        String expertise;
+        while (true) {
+            System.out.println("\nAvailable Expertise Areas: " + allExpertise);
+            System.out.print("Enter one area of expertise from the list above: ");
+            expertise = scanner.nextLine().trim();
+
+            if (!allExpertise.contains(expertise)) {
+                System.out.println("Invalid expertise. Choose one from the available options.");
+            } else {
+                break;
+            }
+        }
+
+        Physiotherapist newPhysio = new Physiotherapist(name, phone, address, List.of(expertise));
+        bookingSystem.addPhysiotherapist(newPhysio);
         System.out.println("New physiotherapist added successfully!");
     }
+
 
     private static void removePhysiotherapist() {
         System.out.print("\n1Enter full name of physiotherapist to remove: ");
