@@ -93,9 +93,7 @@ public class Main {
             System.out.println("[1] Patient Self-Service");
             System.out.println("[2] Booking Management");
             System.out.println("[3] Search & Discovery");
-            System.out.println("[4] Generate appointment report");
-            System.out.println("[5] Export report to file");
-            System.out.println("[6] Admin Panel");
+            System.out.println("[4] Admin Panel");
             System.out.println("[0] Exit");
             System.out.print("\nEnter your choice: ");
 
@@ -111,13 +109,7 @@ public class Main {
                 case 1 -> patientSelfServiceMenu();
                 case 2 -> bookingManagementMenu();
                 case 3 -> searchMenu();
-                case 4 -> reportMenu();
-                case 5 -> {
-                    System.out.print("\nEnter filename to save report (e.g., report.txt): ");
-                    String filename = scanner.nextLine();
-                    bookingSystem.exportReportToFile(filename);
-                }
-                case 6 -> adminMenu();
+                case 4 -> adminMenu();
                 case 0 -> {
                     bookingSystem.saveData(bookingSystem.getPatients(), "patients.dat");
                     bookingSystem.saveData(bookingSystem.getAppointments(), "appointments.dat");
@@ -726,6 +718,8 @@ public class Main {
             System.out.println("[2] View all physiotherapists");
             System.out.println("[3] Add new physiotherapist");
             System.out.println("[4] Remove a physiotherapist");
+            System.out.println("[5] Generate appointment report");
+            System.out.println("[6] Export report to file");
             System.out.println("[0] Back to main menu");
             System.out.print("\nEnter your choice: ");
 
@@ -736,6 +730,13 @@ public class Main {
                     case 2 -> viewAllPhysiotherapists();
                     case 3 -> addNewPhysiotherapist();
                     case 4 -> removePhysiotherapist();
+                    case 5 -> bookingSystem.generateReport();
+                    case 6 -> {
+                        System.out.print("\nEnter filename to save report (e.g., report.txt): ");
+                        String filename = scanner.nextLine();
+                        bookingSystem.exportReportToFile(filename);
+                    }
+
                     case 0 -> { return; }
                     default -> System.out.println("Invalid choice.");
                 }
