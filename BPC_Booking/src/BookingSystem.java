@@ -198,18 +198,26 @@ public class BookingSystem {
 
     // Generate a report of all appointments
     public void generateReport() {
-        System.out.println("=== Appointment Report ===");
-        for (Appointment appointment : appointments){
-            System.out.println(
-                    "Date: " + appointment.getDate() +
-                            ", Time: " + appointment.getTime() +
-                            ", Physiotherapist: " + appointment.getPhysiotherapist().getFullName() +
-                            ", Patient: " + appointment.getPatient().getFullName() +
-                            ", Status: " + appointment.getStatus() +
-                            "Appointment ID: " + appointment.getAppointmentID()
-            );
+        System.out.println("\n=== Appointment Report ===\n");
+
+        if (appointments.isEmpty()) {
+            System.out.println("No appointments found.");
+            return;
         }
+
+        for (Appointment appointment : appointments) {
+            System.out.println("────────────────────────────────────────────────────");
+            System.out.println("Appointment ID   : " + appointment.getAppointmentID());
+            System.out.println("Date             : " + appointment.getDate());
+            System.out.println("Time             : " + appointment.getTime());
+            System.out.println("Treatment        : " + appointment.getTreatment().getTreatmentName());
+            System.out.println("Physiotherapist  : " + appointment.getPhysiotherapist().getFullName());
+            System.out.println("Patient          : " + (appointment.getPatient() != null ? appointment.getPatient().getFullName() : "N/A"));
+            System.out.println("Status           : " + appointment.getStatus());
+        }
+        System.out.println("────────────────────────────────────────────────────");
     }
+
 
     public void exportReportToFile(String filename) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {

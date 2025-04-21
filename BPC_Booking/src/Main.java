@@ -135,12 +135,13 @@ public class Main {
 
     //  Preload some sample physiotherapists, patients, and treatments
     private static void initializeSampleData() {
+
         // Testing Physiotherapists
-        Physiotherapist physio1 = new Physiotherapist("Dr. James Smith", "123-456-7890", "123 Main St", Arrays.asList("Rehabilitation", "Osteopathy"));
-        Physiotherapist physio2 = new Physiotherapist("Dr. Sarah Johnson", "987-654-3210", "456 Elm St", Arrays.asList("Physiotherapy", "Massage"));
-        Physiotherapist physio3 = new Physiotherapist("Dr. Emily Clarke", "555-111-2222", "789 Birch St", Arrays.asList("Acupuncture", "Neural Mobilisation"));
-        Physiotherapist physio4 = new Physiotherapist("Dr. Michael Lee", "555-333-4444", "321 Pine St", Arrays.asList("Spine Mobilisation", "Massage"));
-        Physiotherapist physio5 = new Physiotherapist("Dr. Priya Patel", "555-777-8888", "654 Willow St", Arrays.asList("Pool Therapy", "Rehabilitation"));
+        Physiotherapist physio1 = new Physiotherapist("Dr. James Smith", "1234567890", "123 Main St", List.of("Rehabilitation"));
+        Physiotherapist physio2 = new Physiotherapist("Dr. Sarah Johnson", "9876543210", "456 Elm St", List.of("Massage"));
+        Physiotherapist physio3 = new Physiotherapist("Dr. Emily Clarke", "5551112222", "789 Birch St", List.of("Acupuncture"));
+        Physiotherapist physio4 = new Physiotherapist("Dr. Michael Lee", "5553334444", "321 Pine St", List.of("Spine Mobilisation"));
+        Physiotherapist physio5 = new Physiotherapist("Dr. Priya Patel", "5557778888", "654 Willow St", List.of("Pool Therapy"));
 
         bookingSystem.addPhysiotherapist(physio1);
         bookingSystem.addPhysiotherapist(physio2);
@@ -148,12 +149,39 @@ public class Main {
         bookingSystem.addPhysiotherapist(physio4);
         bookingSystem.addPhysiotherapist(physio5);
 
-        // Sample Patients
-        //Patient patient1 = new Patient("Alice Brown", "111-222-3333", "789 Maple St");
-        //Patient patient2 = new Patient("Bob White", "444-555-6666", "321 Oak St");
+        // Testing Patients
+        Patient p1 = new Patient("Alice Brown", "1112223333", "12 Apple St");
+        Patient p2 = new Patient("Bob White", "4445556666", "34 Berry Rd");
+        Patient p3 = new Patient("Charlie Green", "7778889999", "56 Cherry Ln");
+        Patient p4 = new Patient("Diana Black", "1234567890", "78 Daisy Dr");
+        Patient p5 = new Patient("Ethan Blue", "2345678901", "90 Elm Pl");
+        Patient p6 = new Patient("Fiona Gray", "3456789012", "11 Fir Ct");
+        Patient p7 = new Patient("George Red", "4567890123", "22 Grapevine St");
+        Patient p8 = new Patient("Hannah Pink", "5678901234", "33 Holly Rd");
+        Patient p9 = new Patient("Ian Orange", "6789012345", "44 Ivy Blvd");
+        Patient p10 = new Patient("Jade Gold", "7890123456", "55 Juniper Trl");
+        Patient p11 = new Patient("Kevin Violet", "8901234567", "66 Kingfisher Way");
+        Patient p12 = new Patient("Lara Silver", "9012345678", "77 Lavender Cres");
+        Patient p13 = new Patient("Mason White", "1023456789", "88 Maple St");
+        Patient p14 = new Patient("Nina Brown", "2134567890", "99 Nutmeg Rd");
+        Patient p15 = new Patient("Oscar Gray", "3245678901", "100 Oak Hill");
 
-        //bookingSystem.addPatient(patient1);
-        //bookingSystem.addPatient(patient2);
+        bookingSystem.addPatient(p1);
+        bookingSystem.addPatient(p2);
+        bookingSystem.addPatient(p3);
+        bookingSystem.addPatient(p4);
+        bookingSystem.addPatient(p5);
+        bookingSystem.addPatient(p6);
+        bookingSystem.addPatient(p7);
+        bookingSystem.addPatient(p8);
+        bookingSystem.addPatient(p9);
+        bookingSystem.addPatient(p10);
+        bookingSystem.addPatient(p11);
+        bookingSystem.addPatient(p12);
+        bookingSystem.addPatient(p13);
+        bookingSystem.addPatient(p14);
+        bookingSystem.addPatient(p15);
+
 
         // Testing Treatments
         bookingSystem.addTreatment(new Treatment("Massage", "Relieves muscle tension", "Massage"));
